@@ -1,0 +1,54 @@
+/* Membership.css */
+
+.orange-checkmark {
+    position: relative;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
+    color: orange;
+  }
+  
+  .orange-checkmark:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: orange;
+    opacity: 0.5;
+  }
+  
+  .orange-checkmark:after {
+    content: '\f00c'; /* Unicode for the checkmark icon */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: rgb(230, 144, 23);
+    font-size: 12px;
+  }
+  
+  .marks li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .slick-dots li button:before {
+    color: rgb(221, 170, 77);
+    margin-bottom: 5px;
+  }
+.ych{
+    height: 310px !important;
+}
+.membership-button{
+  width: 235.5px !important;
+  height: 56px !important;
+  background-color: #F47732;
+  color: white !important;
+  border: none;
+}

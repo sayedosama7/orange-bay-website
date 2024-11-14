@@ -1,0 +1,38 @@
+.image-gallery {
+    text-align: center;
+  }
+  
+  .filter-bar {
+    margin-bottom: 20px;
+  }
+  
+  .filter-button {
+    padding: 10px 40px;
+    background-color: #FAFAFA;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .filter-button.active {
+    background-color: #E07026;
+    color: #fff;
+  }
+  .image-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .image-item {
+    width: 1000px !important;
+    max-width: 100% !important;
+    height: auto;
+  }
+  
+  .image-item-gallery {
+    width: 279px !important;
+    max-width: 100% !important;
+    height: auto;
+  }
+  

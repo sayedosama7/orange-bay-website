@@ -1,0 +1,27 @@
+.rectangle-container {
+    width: 500px !important;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    /* right:-180px; */
+    top: -30px;
+    left: 150px;
+    background-color: white;
+    border-top-left-radius: 80px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  }
+  
+  .rectangle-container img {
+    width: 124px;
+    height: 67px;
+    position: relative;
+    left: 10px;
+    padding-left: 35px;
+    margin-top: -20px;
+    padding-bottom: 30px;
+  }
+  
+  .image-row {
+    display: flex;
+    justify-content: space-between;
+  }

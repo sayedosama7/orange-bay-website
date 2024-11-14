@@ -1,0 +1,26 @@
+.fa-star{
+    color: orange ;
+}
+.reservation-search{
+    position: relative;
+    bottom: 350px;
+}
+.reservation-image{
+    width: 1366px !important;
+height: 446px !important;
+}
+.classic-program{
+    font-size: 24px !important;
+    font-weight: bold ;
+}
+.image-caption {
+    display: flex;
+    align-items: center;
+  }
+  
+  .image-caption img {
+    margin-right: 10px; /* Adjust the margin as needed */
+  }
+  .caption{
+    color: #B3B3B3;
+  }

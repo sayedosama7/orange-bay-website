@@ -1,0 +1,69 @@
+.slider-image {
+    /* Add any styles for the first image here */
+  }
+  
+  .image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .centered-images {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  .proimg {
+    /* width: 300px;  */
+    display: block;
+    margin-bottom: 0px;
+    transition: opacity 0.3s ease-in-out;
+
+  }
+  
+  .row {
+    display: flex;
+    justify-content: space-between;
+    /* margin-left: -115px; */
+    
+  }
+  .background-image {
+    width: 100%;
+  }
+  
+  .overlay-container {
+    position: absolute;
+    border-bottom-left-radius: 50px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 55%;
+    opacity: 0.7;
+    background-color: rgba(137, 126, 126, 0.5); /* Adjust the background color and opacity as desired */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease-in-out;
+  }
+  .image-container:hover .overlay-container {
+    opacity: 4; /* Change the opacity to fully visible on hover */
+    transform: scale(0.92);
+    cursor: pointer;
+  }
+  .text-container {
+    text-align: center;
+    color: rgb(255, 255, 255);
+  }
+  
+  .logop {
+    width: 80px; /* Adjust the logo size as needed */
+    margin-top: 10px;
+  }
+  .prog-section{
+    margin-top: 120px !important;
+    margin-bottom:100px !important ;
+  }

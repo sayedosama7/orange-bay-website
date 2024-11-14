@@ -1,0 +1,56 @@
+.bill{
+    width: 410px !important;
+    height: 507px !important;
+}
+.fa-circle-minus   {
+    position: relative;
+    left: 35px !important;
+ font-size: 32px !important;
+ color:#1DA3DD ;
+ z-index: 22;
+ cursor: pointer !important;
+
+  }
+  .fa-circle-plus{
+    position: relative;
+    right:  26px !important;
+ font-size: 32px !important;
+ color:#1DA3DD ;
+ z-index: 22;
+ cursor: pointer !important;
+  }
+  .innn{
+    border-radius: 20% !important;
+    width: 42px !important; 
+  }
+  .we1{
+    width: 242px !important;
+    height: 40px !important;
+    position: relative;
+    left: 36px;
+  }
+  .we{
+    width: 242px !important;
+    height: 40px !important;
+    position: relative;
+    right:  30px;
+  }
+  .qq{
+    z-index: 555 !important;
+  }
+
+  .fa-exclamation{
+    color: red;
+  }
+  .book{
+    width: 250px;
+    height: 56px;
+    background-color: #E07026;
+    color: white;
+    border: none !important;
+    /* margin-left: 120px !important; */
+  }
+.qr{
+  /* height: 200px !important; */
+margin-top: -100px !important; 
+}

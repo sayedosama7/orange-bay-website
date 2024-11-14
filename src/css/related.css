@@ -1,0 +1,62 @@
+.rating {
+    color: orange;
+  }
+  
+  .orange-star::before {
+    content: "\2605";
+    font-size: 20px;
+  }
+  .start-price {
+    background-color:#FAFAFA;
+    color: #dc700a;
+    /* padding: 8px 12px; */
+    opacity: 0.9;
+    border-bottom-right-radius: 20px !important ;
+    text-align: center !important;
+    padding-bottom: 10px;
+    /* font-weight: bold; */
+  }
+  .start {
+    color: #B3B3B3;
+  }
+  .wishlist-icon {
+    background-color: #ffffff;
+    color: #000000;
+    padding: 8px;
+    font-size: 18px;
+  }
+  
+  .top-left {
+    position: absolute;
+    top: 0;
+    left: 0px;
+    
+  }
+  .top-right {
+    position: absolute;
+    top: 5px;
+    right: 10px !important;
+  }
+  
+  .circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .fa-sharp.fa-solid.fa-heart {
+    font-size: 24px;
+    color: #ff6b6b;
+  }
+  .btn-orange{
+    color: #FAFAFA;
+    border: none;
+    background-color: #dc700a;
+    width: 254px !important;
+    height: 46px;
+  }

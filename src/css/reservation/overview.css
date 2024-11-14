@@ -1,0 +1,73 @@
+.overview-container {
+    /* width: 900px !important; */
+    /* height: 200px; */
+    margin: 0 auto;
+  }
+  
+  .overimg {
+    width: 700px !important;
+    height:446px !important;
+    object-fit: cover;
+  }
+  
+  .overview-paragraph {
+    text-align: center;
+    margin-top: 20px;
+  }
+  .box-container {
+    background-color: #d1e2e5;
+    padding: 10px;
+    color: rgb(0, 0, 0);
+  }
+  
+  .line {
+    display: flex;
+    align-items: center;
+  }
+  
+  .check-icon {
+    color: green;
+    margin-right: 10px;
+  }
+  
+  .custom-dots {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+  
+  }
+  .slick-dots{
+    display: none !important;
+  }
+  .custom-dots li {
+ 
+    /* margin: 0 5px; */
+    cursor: pointer;
+    font-weight: bold; /* Customize the style of the numbers */
+    color: #000; /* Customize the color of the numbers */
+  }
+  
+  .custom-dots li.focus {
+    text-decoration:underline;
+  }
+  .circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #e58e0b;
+    color: white;
+    margin: 0 8px; /* Adjust the margin as per your preference */
+    cursor: pointer;
+  }
+  
+  .active {
+    background-color: white;
+    color: #007489;
+  }
+  .slider-pagination{
+    margin-top: -10px;
+  }

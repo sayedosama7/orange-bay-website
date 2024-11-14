@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.n {
+  height: 50px !important;
+}
+
+nav {
+  background-color: #095992 !important;
+  width: 100% !important;
+  height: auto;
+  max-width: 100% !important;
+}
+
+nav .icon {
+  color: rgb(255, 255, 255) !important;
+}
+
+nav a {
+  margin-left: 20px !important;
+  color: black !important;
+  font-size: 20px;
+  font-weight: 550 !important;
+}
+
+/* nav a:hover {
+  color: rgb(246, 172, 77) !important;
+} */
+
+/* nav #lastnav {
+  color: rgba(191, 154, 154, 0.479) !important;
+} */
+
+/* nav #lastnav:hover {
+  color: rgb(246, 172, 77) !important;
+} */
+
+#lastnav i {
+  color: rgb(246, 172, 77);
+}
+
+.nav-link {
+  color: white !important;
+}
+
+.nav-link:hover {
+  color: rgb(221, 158, 9) !important;
+}
+
+.nav-link:focus {
+  color: orange !important;
+  border-bottom: solid 1px orange !important;
+}
+
+.admission {
+  background-color:#F47732;
+  color: white;
+  padding-bottom: 5px;
+  width: 134px !important;
+  height: 34px !important;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 5px;
+  border: none !important;
+  /* border-top-right-radius: 9px; */
+  cursor: pointer;
+}
+
+.nav-dropdown.dropdown-menu {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  margin-left: 20px !important;
+}
+.hh{
+  margin-left: 1px !important;
+}
