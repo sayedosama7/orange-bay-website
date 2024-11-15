@@ -1,10 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
-body {
-  font-family: 'Montserrat', sans-serif;
-}
-
 .n {
-  height: 50px !important;
+  height: 100% !important;
 }
 
 nav {
@@ -55,7 +50,7 @@ nav a {
 }
 
 .admission {
-  background-color:#F47732;
+  background-color: #F47732;
   color: white;
   padding-bottom: 5px;
   width: 134px !important;
@@ -75,6 +70,7 @@ nav a {
   z-index: 10;
   margin-left: 20px !important;
 }
-.hh{
+
+.hh {
   margin-left: 1px !important;
 }

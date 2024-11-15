@@ -1,19 +1,35 @@
-.o{
-    color: rgb(10, 9, 9) !important;
-    font-size:medium;
-    cursor: pointer;
+.o {
+  color: rgb(10, 9, 9) !important;
+  font-size: medium;
+  cursor: pointer;
+}
+
+.o:hover {
+  color: orange !important;
+  border-bottom: solid 0.5px orange !important;
+}
+
+.o:focus {
+  color: orange !important;
+  border-bottom: solid 0.5px orange !important;
+}
+
+.bg {
+  background-color: white !important;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+@media (max-width:567px) {
+  .navbar-light .navbar-brand {
+    display: none;
   }
-  .o:hover{
-    color: orange !important;
-    border-bottom: solid 0.5px orange !important;
+  .bg {
+    background-color: white !important;
+    display: flex;
+    justify-content: start;
+    align-items: start;
+
   }
-  .o:focus{
-    color: orange !important;
-    border-bottom: solid 0.5px orange !important;
-  }
-  .bg{
-  background-color:white !important;
-  z-index: 0;
-  /* height: 100px; */
- 
-  }
+}

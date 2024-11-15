@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const NavBars = () => {
   return (
     <Navbar expand="lg"  className='bg'>
-      <Nav className="mr-auto ">
+      <Nav className=" ">
         <Link className="nav-link o" to="/">
           Home
         </Link>
@@ -18,12 +18,12 @@ const NavBars = () => {
           Dining
         </Link>
       </Nav>
-      <Navbar.Brand className="ml-auto">
+      <Navbar.Brand className="">
       <Link to="/">
           <img src="/logo.png" className="logo" alt="Logo" />
         </Link>
       </Navbar.Brand>
-      <Nav className="ml-auto">
+      <Nav className="">
         <NavLink className="nav-link o" to="/contact">
           Contact Us
         </NavLink>
