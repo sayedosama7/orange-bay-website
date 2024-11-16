@@ -3,6 +3,10 @@
 
 }
 
+.main-color {
+  color: #E07026  ;
+}
+
 body {
   font-family: "Roboto", serif;
 
@@ -89,10 +93,9 @@ body {
 }
 
 .ticket-price {
-  background-color: #ebe9e9;
+  background-color: #fff;
   border-bottom-right-radius: 10px !important;
   color: #f47732;
-  opacity: .9;
   padding: 5px 20px 10px;
   text-align: center !important;
 }
@@ -115,24 +118,27 @@ body {
   font-weight: 600;
   font-size: 17px;
 }
+
 .btn-warning {
-  background-color:#f47732 !important ;
+  background-color: #f47732 !important;
   color: white !important;
 }
+
 .login-edit {
   background-color: #fff;
   padding: 30px;
   border-radius: 10px;
 }
+
 /* .all-login {
   text-align: center;
   background-size: 72% 100%;
   overflow-y: auto;
   background-color: #f7f7f7;
 } */
- .all-login {
-  background: linear-gradient(to right , rgba(255, 0, 0, 0.151) ,rgba(255, 0, 0, 0.212) ),url(../public/Login.jpg);
+.all-login {
+  background: linear-gradient(to right, rgba(255, 0, 0, 0.151), rgba(255, 0, 0, 0.212)), url(../public/Login.jpg);
   height: 600px;
   background-position: center;
   background-size: cover;
- }
+}

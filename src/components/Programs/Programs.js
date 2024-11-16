@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import MySlider from '../homepage/slider';
 import { Loading } from '../Loading/Loading';
-import { jwtDecode } from 'jwt-decode';
 import axios from 'axios';
 import { baseURL, IMG_URL, TICKETS } from '../Api/Api';
 import { Link } from 'react-router-dom';
@@ -14,31 +13,14 @@ const Programs = () => {
     const fetchData = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            let role = '';
+            const response = await axios.get(`${baseURL}/${TICKETS}`, {
+                headers: {
+                    Accept: '*/*',
+                    'Content-Type': 'application/json',
+                },
+            });
 
-            if (token) {
-                try {
-                    const decoded = jwtDecode(token);
-                    role = decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-                } catch (error) {
-                    console.error('Error decoding token:', error);
-                }
-            }
-
-            if (role === 'Admin' || role === 'Employee') {
-                const response = await axios.get(`${baseURL}/${TICKETS}`, {
-                    headers: {
-                        Accept: '*/*',
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-
-                setData(response.data);
-            } else {
-                console.warn('Access denied: Only admins and employees can fetch ticket data.');
-            }
+            setData(response.data);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -71,13 +53,13 @@ const Programs = () => {
                                             alt='tickets'
                                         />
                                         <div className='position-absolute ticket-price'>
-                                            <p className='m-0'>start with</p>
+                                            <p className='m-0'>price</p>
                                             <p className='m-0'>{ticket.price}</p>
                                         </div>
                                         <div className="card-body">
                                             <h5 className="card-title">{ticket.title}</h5>
                                             <p className="card-text text-primary">{ticket.description}</p>
-                                            <Link to={`/reservation/${ticket.id}`} className="position-absolute">details</Link>
+                                            <Link to={`/reservation/${ticket.id}`} className="position-absolute text-decoration-underline">details</Link>
                                         </div>
                                     </div>
                                 </div>
