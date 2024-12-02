@@ -4,12 +4,87 @@
 }
 
 .main-color {
-  color: #E07026  ;
+  color: #E07026;
+}
+
+.btn-main {
+  background-color: #E07026 !important;
+  color: #fff !important;
+  border: none;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 50% !important;
+  height: 90vh;
+  overflow-y: auto;
+  margin: auto !important;
+  text-align: center;
+  margin-top: 2.5% !important;
+}
+
+.close {
+  font-size: 30px;
+  cursor: pointer;
+  color: red;
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.css-1usuzwp-MuiButtonBase-root-MuiTab-root,
+.css-6p016c {
+  margin-left: 5px !important;
+}
+
+.css-1gsv261 {
+  border-bottom: none !important;
+}
+
+.css-1usuzwp-MuiButtonBase-root-MuiTab-root.Mui-selected,
+.css-6p016c.Mui-selected {
+  background-color: #E07026 !important;
+  color: #fff !important;
+  border-radius: 5px;
+}
+
+.css-1qltlow-MuiTabs-indicator,
+.css-jkmkwa {
+  background-color: #fff !important;
+}
+
+.booking-details p {
+  font-size: 16px;
+  margin: 8px 0;
+}
+
+.btn-primary {
+  background-color: #094e6c !important;
+  color: #fff !important;
+  border: none;
 }
 
 body {
   font-family: "Roboto", serif;
+}
 
+.error-log {
+  color: red;
+  margin-top: 7px;
 }
 
 .App-logo {
@@ -67,7 +142,7 @@ body {
   height: 50px;
   width: 50px;
   border-radius: 50%;
-  border: 4px solid #1DA2DC;
+  border: 4px solid #f47732;
   border-top: 4px solid #fff;
   animation: rotate-spinner 1s linear infinite;
 }
@@ -92,6 +167,24 @@ body {
   }
 }
 
+.ticket-card {
+  transition: all 0.3s ease-in-out;
+}
+
+.ticket-card:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* تأثير خفيف حول العنصر */
+  transform: scale(1.1);
+  /* تأثير الانتقال */
+}
+
+.css-3hpdci-MuiSvgIcon-root-MuiStepIcon-root.Mui-active,
+.css-124afma.Mui-completed,
+.css-124afma.Mui-active,
+.css-3hpdci-MuiSvgIcon-root-MuiStepIcon-root.Mui-completed {
+  color: #f47732 !important;
+}
+
 .ticket-price {
   background-color: #fff;
   border-bottom-right-radius: 10px !important;
@@ -102,13 +195,13 @@ body {
 
 .ticket-price p:nth-of-type(1) {
   color: #727070;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .ticket-price p:nth-of-type(2) {
   color: #f47732;
   font-weight: 700;
-  font-size: 18px;
+  /* font-size: 18px; */
 }
 
 .program .ticket a {
@@ -120,8 +213,19 @@ body {
 }
 
 .btn-warning {
-  background-color: #f47732 !important;
+  background-color: #FFC439 !important;
   color: white !important;
+}
+
+.banner-img {
+  background: linear-gradient(to right, #00000080, #00000080), url("../public/1.jpg");
+  height: 450px;
+  background-position: center;
+  background-size: cover;
+}
+
+.banner-img h2 {
+  font-size: 50px;
 }
 
 .login-edit {
@@ -130,15 +234,41 @@ body {
   border-radius: 10px;
 }
 
-/* .all-login {
-  text-align: center;
-  background-size: 72% 100%;
-  overflow-y: auto;
-  background-color: #f7f7f7;
-} */
 .all-login {
   background: linear-gradient(to right, rgba(255, 0, 0, 0.151), rgba(255, 0, 0, 0.212)), url(../public/Login.jpg);
   height: 600px;
   background-position: center;
   background-size: cover;
+}
+
+
+.booking-summary,
+.user-details {
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.219);
+  padding: 10px 100px;
+  width: 100%;
+}
+
+@media(max-width:768px) {
+  .all-login {
+    background: none;
+    height: auto;
+  }
+
+  .login-form {
+    height: 100% !important;
+  }
+
+  .banner-img {
+    height: 350px;
+  }
+
+  .banner-img h2 {
+    font-size: 30px;
+  }
+
+  .pay-btn {
+    display: block !important;
+    width: 100%;
+  }
 }

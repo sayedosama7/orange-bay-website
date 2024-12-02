@@ -1,11 +1,9 @@
 .overview-container {
-  /* width: 900px !important; */
-  /* height: 200px; */
   margin: 0 auto;
 }
 
 .overimg {
-  width: 500px !important;
+  width: 750px !important;
   height: 400px !important;
   object-fit: cover;
   border-radius: 10px;
@@ -32,51 +30,60 @@
   margin-right: 10px;
 }
 
-.custom-dots {
-  display: flex;
-  justify-content: center;
-  list-style: none;
-  padding: 0;
-
-}
-
 .slick-dots {
   display: none !important;
 }
 
 .custom-dots li {
-
-  /* margin: 0 5px; */
   cursor: pointer;
   font-weight: bold;
-  /* Customize the style of the numbers */
   color: #000;
-  /* Customize the color of the numbers */
 }
 
 .custom-dots li.focus {
   text-decoration: underline;
 }
 
-.circle {
+.custom-dots {
   display: flex;
-  align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: #e58e0b;
-  color: white;
-  margin: 0 8px;
-  /* Adjust the margin as per your preference */
-  cursor: pointer;
+  list-style: none;
+  padding: 0;
 }
 
-.active {
-  background-color: white;
-  color: #007489;
+.custom-dots li {
+  margin: 0 5px;
 }
+
+.custom-dots .circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.custom-dots .circle.active {
+  background-color: #e58e0b;
+}
+
+.custom-dots .circle:hover {
+  background-color: #ff6600;
+}
+
 
 .slider-pagination {
   margin-top: -10px;
+}
+
+@media (max-width:567px) {
+  .overimg {
+    width: 100% !important;
+  }
 }

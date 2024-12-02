@@ -1,34 +1,41 @@
 import './App.css';
 import { Route, Routes } from "react-router-dom";
-import Home from './components/homepage/Home';
 import FirstDining from './components/dining/firstDining';
 import ImageGallery from './components/dining/resturants';
-import QRCodePage from './components/Reservation/qrcode';
 import Programs from './components/Programs/Programs';
 import FirstGallery from './components/gallery/FirstGallery';
 import Header from './components/navs/Header';
 import NavBars from './components/navs/NavBars';
 import Footer from './components/homepage/Footer';
-import Reservation from './components/Reservation/Reservation';
 import Login from './components/Login/Login';
+import Details from './components/Reservation/Details';
+import Success from './components/Reservation/Success';
+import BookingStepper from './components/Reservation/Stepper';
+import { Provider } from 'react-redux';
+import { store } from './store/store';
+import MyReservation from './components/MyReservation/MyReservation';
 function App() {
   return (
-    <>
+    <Provider store={store}>
       <Header />
       <NavBars />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/Reservation" element={<Reservation />} />
-        <Route path="/Reservation/:id" element={<Reservation />} />
+        <Route path="/" element={<Programs />} />
+        <Route path="/home" element={<Programs />} />
+        <Route path="/details" element={<Details />} />
+        <Route path="/details/:id" element={<Details />} />
         <Route path="/program" element={<Programs />} />
         <Route path='/dining' element={<FirstDining />} />
         <Route path='/restaurants' element={<ImageGallery />} />
         <Route path='/gallery' element={<FirstGallery />} />
-        <Route exact path="/qrcode" element={<QRCodePage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/success" element={<Success />} />
+        <Route path="/booking" element={<BookingStepper />} />
+        <Route path="/my-reservation" element={<MyReservation />} />
       </Routes>
       <Footer />
-    </>
+    </Provider>
+
   );
 }
 

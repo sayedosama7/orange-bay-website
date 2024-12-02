@@ -46,7 +46,7 @@ const Header = () => {
                     <NavLink className="nav-link" to="/schools">
                         العربية
                     </NavLink>
-
+                    <p className="nav-link text-capitalize">welcome</p>
                     {token ? (
                         <button className="admission" onClick={handleLogout}>
                             Log out

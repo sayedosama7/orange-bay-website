@@ -72,4 +72,8 @@
   .slider-text {
     top: 150px;
   }
+
+  .slick-next {
+    display: none !important;
+  }
 }

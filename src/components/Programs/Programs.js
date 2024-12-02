@@ -41,27 +41,29 @@ const Programs = () => {
                     <div className="row">
                         {data.length > 0 ? (
                             data.map(ticket => (
-                                <div className="col-md-6 col-lg-4 mb-4 ticket" key={ticket.id}>
-                                    <div className="card h-100 position-relative">
-                                        <img
-                                            className='img- fluid'
-                                            style={{
-                                                height: "300px",
-                                                objectFit: 'cover',
-                                            }}
-                                            src={`${IMG_URL}${ticket.image}`}
-                                            alt='tickets'
-                                        />
-                                        <div className='position-absolute ticket-price'>
-                                            <p className='m-0'>price</p>
-                                            <p className='m-0'>{ticket.price}</p>
+                                <div className="col-md-6 col-lg-4 mb-5 px-3 ticket" key={ticket.id}>
+                                    <Link to={`/details/${ticket.id}`}>
+                                        <div className="card ticket-card h-100 position-relative">
+                                            <img
+                                                className="img-fluid"
+                                                style={{
+                                                    height: "300px",
+                                                    objectFit: "cover",
+                                                }}
+                                                src={`${IMG_URL}${ticket.images[0]}`}
+                                                alt="tickets"
+                                            />
+                                            <div className="position-absolute ticket-price">
+                                                <p className="m-0">Adult: {ticket.adultPrice}</p>
+                                                <p className="m-0">Child: {ticket.childPrice}</p>
+                                            </div>
+                                            <div className="card-body">
+                                                <h5 className="card-title">{ticket.title}</h5>
+                                                <p className="card-text text-primary">{ticket.description}</p>
+                                            </div>
                                         </div>
-                                        <div className="card-body">
-                                            <h5 className="card-title">{ticket.title}</h5>
-                                            <p className="card-text text-primary">{ticket.description}</p>
-                                            <Link to={`/reservation/${ticket.id}`} className="position-absolute text-decoration-underline">details</Link>
-                                        </div>
-                                    </div>
+                                    </Link>
+
                                 </div>
                             ))
                         ) : (
@@ -69,7 +71,7 @@ const Programs = () => {
                         )}
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     );
 };
