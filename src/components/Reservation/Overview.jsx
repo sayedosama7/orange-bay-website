@@ -48,7 +48,6 @@ const Overview = ({ onDataUpdate }) => {
                 setError(null);
                 const response = await axios.get(`${baseURL}/${TICKETS}/GetById?id=${id}`);
                 const ticketData = response.data.value;
-
                 const userDetails = ticketData.detailsDto.find(
                     detail => detail.userType.toLowerCase() === userType
                 );
@@ -56,7 +55,6 @@ const Overview = ({ onDataUpdate }) => {
                 const selectedDetails = userDetails || defaultDetails;
 
                 setTicket(ticketData);
-                console.log('ticketData', ticketData);
 
                 if (onDataUpdate) {
                     onDataUpdate({

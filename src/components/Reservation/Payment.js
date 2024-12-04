@@ -8,7 +8,6 @@ const Payment = ({ bookDetail, handleNext }) => {
   const { adults, children, currentDate, selectedDate } = bookDetail;
 
   const [loading, setLoading] = useState(false);
-  // const [selectedDate, setSelectedDate] = useState(null);
   const [addTionalServices, setAddTionalServices] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [additionalServices, setAdditionalServices] = useState([]);
@@ -17,7 +16,6 @@ const Payment = ({ bookDetail, handleNext }) => {
     const storedDetails = localStorage.getItem('bookingUserDetails');
     if (storedDetails) {
       const parsedDetails = JSON.parse(storedDetails);
-      // setSelectedDate(parsedDetails.bookingDate || null);
       setAddTionalServices(parsedDetails.details?.flatMap(detail => detail.addTionalServices) || []);
       setTotalPrice(parsedDetails.price || 0);
       setAdditionalServices(parsedDetails.additionalServices);
@@ -33,17 +31,13 @@ const Payment = ({ bookDetail, handleNext }) => {
   const formatDate = (date) => {
     if (!date) return 'No date selected';
     try {
-      return new Date(date).toLocaleDateString('en-GB', {
-        day: 'numeric',
-        month: 'numeric',
-        year: 'numeric',
-      });
+      const zonedDate = toZonedTime(date, 'Africa/Cairo');
+      return format(zonedDate, 'dd/MM/yyyy');
     } catch (error) {
       console.error('Invalid date:', date);
       return 'Invalid date';
     }
   };
-
   const handleCashPay = async () => {
     const storedDetails = localStorage.getItem('bookingUserDetails');
 
@@ -67,7 +61,7 @@ const Payment = ({ bookDetail, handleNext }) => {
     }
 
     const bookingDate = selectedDate ? toZonedTime(selectedDate, 'Africa/Cairo') : new Date();
-    const formattedBookingDate = bookingDate.toISOString();
+    const formattedBookingDate = format(bookingDate, 'yyyy-MM-dd', { timeZone: 'Africa/Cairo' });
 
     const data = {
       ticketId: parsedDetails.ticketId || parsedDetails.id,

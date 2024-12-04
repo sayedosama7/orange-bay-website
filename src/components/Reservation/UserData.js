@@ -7,11 +7,12 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { ADDTIONALSERVICES, baseURL } from '../Api/Api';
 import { Loading } from '../Loading/Loading';
+import { format } from 'date-fns';
 
 const UserData = ({ bookDetail, handleNext }) => {
   const [allServices, setAllServices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { adults, children, id, adultPrice, childPrice } = bookDetail;
+  const { adults, children, id, adultPrice, childPrice ,selectedDate } = bookDetail;  
 
   const [formData, setFormData] = useState({
     adults: [],
@@ -158,7 +159,8 @@ const UserData = ({ bookDetail, handleNext }) => {
       numberOfChilds: formData.children.length,
       details,
       additionalServices,
-      bookingDate: new Date().toISOString(),
+      bookingDate: format(selectedDate, 'yyyy-MM-dd'),
+
     };
     localStorage.setItem('bookingUserDetails', JSON.stringify(payload));
     handleNext(payload.additionalServices);

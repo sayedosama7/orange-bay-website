@@ -6,7 +6,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Overview from './Overview';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router';
-import { toZonedTime } from 'date-fns-tz';
 
 export default function Details() {
     const [selectedDate, setSelectedDate] = useState(null);
@@ -29,24 +28,19 @@ export default function Details() {
             setChildren(children - 1);
         }
     };
-    const handleDateChange = (date) => {
-        console.log('Selected date (local):', date);  // تاريخ المستخدم المحلي
-        const timeZone = 'Africa/Cairo';  // Cairo timezone
-        const localDate = toZonedTime(date, timeZone);  // Convert to Cairo timezone
-        console.log('Converted to Cairo time:', localDate);  // التاريخ بعد تحويله لتوقيت القاهرة
-    
-        const adjustedDate = new Date(localDate);
-        adjustedDate.setHours(0, 0, 0, 0);  // Ensure midnight (start of day)
-        console.log('Adjusted date:', adjustedDate);  // التاريخ المعدل
-    
-        setSelectedDate(adjustedDate);
+    const handleDateChange = date => {
+        const timeZone = 'Africa/Cairo';
+        const localDate = new Date(date);
+        localDate.setHours(12, 0, 0, 0);
+        setSelectedDate(localDate);
     };
-    
+
     const [overviewData, setOverviewData] = useState({
         id: null,
         adultPrice: null,
         childPrice: null,
         title: null,
+        selectedDate: null,
     });
 
     const handleBookNow = () => {
@@ -85,14 +79,13 @@ export default function Details() {
         const bookDetail = {
             title: overviewData.title,
             id: overviewData.id,
-            selectedDate,
-            currentDate: new Date(),
+            selectedDate: selectedDate.toISOString().split('T')[0],
+            currentDate: new Date().toISOString(),
             adults,
             children,
             adultPrice: overviewData.adultPrice,
             childPrice: overviewData.childPrice,
         };
-
         localStorage.setItem('bookDetail', JSON.stringify(bookDetail));
         navigate('/booking');
     };
@@ -115,15 +108,14 @@ export default function Details() {
                                 style={{ display: 'flex', justifyContent: 'center' }}
                             >
                                 <DatePicker
-                                    selected={selectedDate} // التاريخ الحالي من الحالة
-                                    onChange={handleDateChange} // تعيين التاريخ الجديد
+                                    selected={selectedDate}
+                                    onChange={handleDateChange}
                                     dateFormat="dd/MM/yyyy"
                                     className="form-control text-center"
-                                    minDate={new Date()} // منع التواريخ السابقة (بما في ذلك اليوم)
-                                    placeholderText="Select a date" // نص بديل عند عدم تحديد تاريخ
+                                    minDate={new Date()}
+                                    placeholderText="Select a date"
                                     filterDate={date => {
                                         const today = new Date();
-                                        // السماح فقط للتواريخ بعد اليوم
                                         return date > today;
                                     }}
                                 />
