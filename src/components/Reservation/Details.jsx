@@ -1,14 +1,15 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../css/reservation/navbook.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Overview from './Overview';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router';
+import { toZonedTime } from 'date-fns-tz';
 
 export default function Details() {
-    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedDate, setSelectedDate] = useState(null);
     const [adults, setAdults] = useState(0);
     const [children, setChildren] = useState(0);
     const navigate = useNavigate();
@@ -28,9 +29,19 @@ export default function Details() {
             setChildren(children - 1);
         }
     };
-
-    const handleDateChange = date => setSelectedDate(date);
-
+    const handleDateChange = (date) => {
+        console.log('Selected date (local):', date);  // تاريخ المستخدم المحلي
+        const timeZone = 'Africa/Cairo';  // Cairo timezone
+        const localDate = toZonedTime(date, timeZone);  // Convert to Cairo timezone
+        console.log('Converted to Cairo time:', localDate);  // التاريخ بعد تحويله لتوقيت القاهرة
+    
+        const adjustedDate = new Date(localDate);
+        adjustedDate.setHours(0, 0, 0, 0);  // Ensure midnight (start of day)
+        console.log('Adjusted date:', adjustedDate);  // التاريخ المعدل
+    
+        setSelectedDate(adjustedDate);
+    };
+    
     const [overviewData, setOverviewData] = useState({
         id: null,
         adultPrice: null,
@@ -39,6 +50,15 @@ export default function Details() {
     });
 
     const handleBookNow = () => {
+        if (!selectedDate) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Booking Error',
+                text: 'Please select a date.',
+                confirmButtonColor: '#E07026',
+            });
+            return;
+        }
         if (adults === 0) {
             Swal.fire({
                 icon: 'error',
@@ -95,12 +115,19 @@ export default function Details() {
                                 style={{ display: 'flex', justifyContent: 'center' }}
                             >
                                 <DatePicker
-                                    selected={selectedDate}
-                                    onChange={handleDateChange}
+                                    selected={selectedDate} // التاريخ الحالي من الحالة
+                                    onChange={handleDateChange} // تعيين التاريخ الجديد
                                     dateFormat="dd/MM/yyyy"
                                     className="form-control text-center"
-                                    minDate={new Date()}
+                                    minDate={new Date()} // منع التواريخ السابقة (بما في ذلك اليوم)
+                                    placeholderText="Select a date" // نص بديل عند عدم تحديد تاريخ
+                                    filterDate={date => {
+                                        const today = new Date();
+                                        // السماح فقط للتواريخ بعد اليوم
+                                        return date > today;
+                                    }}
                                 />
+
                                 <div className="input-group-append">
                                     <span className="input-group-text">
                                         <i className="fa-regular fa-calendar"></i>

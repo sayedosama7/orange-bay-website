@@ -13,22 +13,22 @@ const Programs = () => {
 
     const checkUserType = () => {
         const token = localStorage.getItem('token');
-        let role = '';
+        let role = 'guest';
 
         if (token) {
             try {
                 const decoded = jwtDecode(token);
-                role = decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-                setUserType(role || 'guest');
+                role = decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']?.toLowerCase() || 'guest';
+                setUserType(role);
             } catch (error) {
                 console.error('Error decoding token:', error);
+                setUserType('guest');
             }
         } else {
             setUserType('guest');
         }
     };
 
-    // Fetch tickets
     const fetchData = async () => {
         setLoading(true);
         try {
@@ -60,10 +60,8 @@ const Programs = () => {
                     <div className="row">
                         {data.length > 0 ? (
                             data.map(ticket => {
-                                const userDetails = ticket.detailsDto.find(detail => detail.userType === userType);
-
+                                const userDetails = ticket.detailsDto.find(detail => detail.userType.toLowerCase() === userType);
                                 const defaultDetails = ticket.detailsDto[0];
-
                                 const selectedDetails = userDetails || defaultDetails;
 
                                 return (

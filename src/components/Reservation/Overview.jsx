@@ -6,6 +6,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import '../../css/reservation/overview.css';
 import axios from 'axios';
 import { baseURL, IMG_URL, TICKETS } from '../Api/Api';
+import { jwtDecode } from 'jwt-decode';
 import { Loading } from '../Loading/Loading';
 import '../../css/reservation/navbook.css';
 
@@ -16,6 +17,28 @@ const Overview = ({ onDataUpdate }) => {
     const [error, setError] = useState(null);
     const sliderRef = React.useRef(null);
     const [currentSlide, setCurrentSlide] = React.useState(0);
+    const [userType, setUserType] = useState('guest');
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        let role = 'guest';
+
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+                role =
+                    decoded[
+                        'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
+                    ]?.toLowerCase() || 'guest';
+                setUserType(role);
+            } catch (error) {
+                console.error('Error decoding token:', error);
+                setUserType('guest');
+            }
+        } else {
+            setUserType('guest');
+        }
+    }, []);
 
     // Fetch ticket details
     useEffect(() => {
@@ -24,14 +47,23 @@ const Overview = ({ onDataUpdate }) => {
                 setLoading(true);
                 setError(null);
                 const response = await axios.get(`${baseURL}/${TICKETS}/GetById?id=${id}`);
-                setTicket(response.data.value);
+                const ticketData = response.data.value;
+
+                const userDetails = ticketData.detailsDto.find(
+                    detail => detail.userType.toLowerCase() === userType
+                );
+                const defaultDetails = ticketData.detailsDto[0];
+                const selectedDetails = userDetails || defaultDetails;
+
+                setTicket(ticketData);
+                console.log('ticketData', ticketData);
 
                 if (onDataUpdate) {
                     onDataUpdate({
-                        id: response.data.value.id,
-                        title: response.data.value.title,
-                        adultPrice: response.data.value.detailsDto[0].adultPrice,
-                        childPrice: response.data.value.detailsDto[0].childPrice,
+                        id: ticketData.id,
+                        title: ticketData.title,
+                        adultPrice: selectedDetails.adultPrice,
+                        childPrice: selectedDetails.childPrice,
                     });
                 }
 
@@ -43,7 +75,7 @@ const Overview = ({ onDataUpdate }) => {
             }
         };
         fetchTicketDetails();
-    }, [id, onDataUpdate]);
+    }, [id, onDataUpdate, userType]);
 
     const goToSlide = index => {
         sliderRef.current.slickGoTo(index);

@@ -2,12 +2,13 @@
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { Loading } from '../Loading/Loading';
+import { toZonedTime, format } from 'date-fns-tz';
 
 const Payment = ({ bookDetail, handleNext }) => {
-  const { adults, children, currentDate } = bookDetail;
+  const { adults, children, currentDate, selectedDate } = bookDetail;
 
   const [loading, setLoading] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
+  // const [selectedDate, setSelectedDate] = useState(null);
   const [addTionalServices, setAddTionalServices] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [additionalServices, setAdditionalServices] = useState([]);
@@ -16,7 +17,7 @@ const Payment = ({ bookDetail, handleNext }) => {
     const storedDetails = localStorage.getItem('bookingUserDetails');
     if (storedDetails) {
       const parsedDetails = JSON.parse(storedDetails);
-      setSelectedDate(parsedDetails.bookingDate || null);
+      // setSelectedDate(parsedDetails.bookingDate || null);
       setAddTionalServices(parsedDetails.details?.flatMap(detail => detail.addTionalServices) || []);
       setTotalPrice(parsedDetails.price || 0);
       setAdditionalServices(parsedDetails.additionalServices);
@@ -65,6 +66,9 @@ const Payment = ({ bookDetail, handleNext }) => {
       return;
     }
 
+    const bookingDate = selectedDate ? toZonedTime(selectedDate, 'Africa/Cairo') : new Date();
+    const formattedBookingDate = bookingDate.toISOString();
+
     const data = {
       ticketId: parsedDetails.ticketId || parsedDetails.id,
       currentDate: parsedDetails.bookingDate || parsedDetails.currentDate,
@@ -79,7 +83,7 @@ const Payment = ({ bookDetail, handleNext }) => {
         email: detail.email,
         personAge: detail.personAge || 0,
       })),
-      bookingDate: parsedDetails.bookingDate || new Date().toISOString(),
+      bookingDate: formattedBookingDate,
     };
 
     try {
