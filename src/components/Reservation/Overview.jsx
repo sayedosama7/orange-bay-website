@@ -30,8 +30,8 @@ const Overview = ({ onDataUpdate }) => {
                     onDataUpdate({
                         id: response.data.value.id,
                         title: response.data.value.title,
-                        adultPrice: response.data.value.adultPrice,
-                        childPrice: response.data.value.childPrice,
+                        adultPrice: response.data.value.detailsDto[0].adultPrice,
+                        childPrice: response.data.value.detailsDto[0].childPrice,
                     });
                 }
 

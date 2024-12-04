@@ -12,14 +12,7 @@ export default function Login() {
     useEffect(() => {
         if (data) {
             localStorage.setItem('token', data.token);
-
-            if (data.role === 'Admin') {
-                navigate('/');
-            } else if (data.role === 'Employee') {
-                navigate('/');
-            } else {
-                console.error('Invalid role');
-            }
+            navigate('/');
         }
     }, [data, navigate]);
 

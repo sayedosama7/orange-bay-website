@@ -1,18 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import '../../css/reservation/navbook.css';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Overview from './Overview';
-import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
-import { ADDTIONALSERVICES, baseURL } from '../Api/Api';
-import { Loading } from '../Loading/Loading';
-import Checkbox from '@mui/material/Checkbox';
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router';
 
@@ -21,7 +12,6 @@ export default function Details() {
     const [adults, setAdults] = useState(0);
     const [children, setChildren] = useState(0);
     const navigate = useNavigate();
-
 
     const handleIncrement = type => {
         if (type === 'adults') {
@@ -41,15 +31,12 @@ export default function Details() {
 
     const handleDateChange = date => setSelectedDate(date);
 
-
-
     const [overviewData, setOverviewData] = useState({
         id: null,
         adultPrice: null,
         childPrice: null,
         title: null,
     });
-
 
     const handleBookNow = () => {
         if (adults === 0) {
@@ -82,6 +69,8 @@ export default function Details() {
             currentDate: new Date(),
             adults,
             children,
+            adultPrice: overviewData.adultPrice,
+            childPrice: overviewData.childPrice,
         };
 
         localStorage.setItem('bookDetail', JSON.stringify(bookDetail));
@@ -91,7 +80,6 @@ export default function Details() {
     return (
         <div className="container mt-5">
             <div className="row">
-
                 <div className="col-md-6">
                     <Overview onDataUpdate={setOverviewData} />
                 </div>

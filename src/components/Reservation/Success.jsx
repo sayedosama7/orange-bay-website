@@ -4,7 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import QRCode from 'qrcode.react';
 import axios from 'axios';
 import { Loading } from '../Loading/Loading';
-
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
 const Success = ({ bookDetail }) => {
     const { currentDate, title } = bookDetail;
 
@@ -41,7 +44,6 @@ const Success = ({ bookDetail }) => {
 
                 if (response.data.isSuccess) {
                     setBookDetails(response.data.value);
-                    console.log(response.data.value);
                 } else {
                     setError('Failed to fetch booking details.');
                 }
@@ -86,12 +88,38 @@ const Success = ({ bookDetail }) => {
     };
 
     const closeModal = () => setShowModal(false);
-
     return (
         <div className="container text-capitalize mt-5 text-center">
             <div className="row">
                 <div className="col-md-6 m-auto">
                     <h1 className="success-title text-center mb-4 pt-2">Booking Confirmed! 🎉</h1>
+                    <p>
+                        <strong className="main-color">Booking ID:</strong> {bookDetails.bookingId}
+                    </p>
+                    <p>
+                        <strong className="main-color">Ticket Name :</strong>{' '}
+                        {bookDetails.ticketName}
+                    </p>
+                    <p>
+                        <strong className="main-color">user type :</strong> {bookDetails.role}
+                    </p>
+                    <p>
+                        <strong className="main-color">Number of Adults:</strong>{' '}
+                        {bookDetails.numberOfAdults}
+                    </p>
+                    <p>
+                        <strong className="main-color">Number of Children:</strong>{' '}
+                        {bookDetails.numberOfChilds}
+                    </p>
+                    <p>
+                        <strong className="main-color">Total Price:</strong>{' '}
+                        {bookDetails.totalPrice} EGP
+                    </p>
+                    <p>
+                        <strong className="main-color">Total Additional Price:</strong>{' '}
+                        {bookDetails.totalAddtionalPrice} EGP
+                    </p>
+
                     {bookingItems.map((item, index) => {
                         const {
                             price,
@@ -101,6 +129,7 @@ const Success = ({ bookDetail }) => {
                             phoneNumber,
                             bookDate,
                             services,
+                            createdOn,
                         } = item;
 
                         return (
@@ -109,9 +138,6 @@ const Success = ({ bookDetail }) => {
                                     <p>
                                         <strong className="main-color">Booking ID:</strong>{' '}
                                         {bookDetails.bookingId}
-                                    </p>
-                                    <p>
-                                        <strong className="main-color">trip name:</strong> {title}
                                     </p>
                                     <p>
                                         <strong className="main-color">Serial Number:</strong>{' '}
@@ -132,6 +158,10 @@ const Success = ({ bookDetail }) => {
                                         </p>
                                     )}
                                     <p>
+                                        <strong className="main-color">Booking On:</strong>{' '}
+                                        {formatDate(createdOn)}
+                                    </p>
+                                    <p>
                                         <strong className="main-color">Booking Date:</strong>{' '}
                                         {formatDate(bookDate)}
                                     </p>
@@ -145,10 +175,15 @@ const Success = ({ bookDetail }) => {
                                     ) : (
                                         <p>No services</p>
                                     )}
-                                    <p>
-                                        <strong className="main-color">Total Price:</strong> {price}{' '}
-                                        EGP
-                                    </p>
+
+                                    {price > 0 && (
+                                        <p>
+                                            <strong className="main-color">
+                                                Total Services Price:
+                                            </strong>{' '}
+                                            {price} EGP
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         );
@@ -167,111 +202,108 @@ const Success = ({ bookDetail }) => {
                 </div>
             </div>
 
-            {showModal && (
-                <div className="modal" style={{ display: 'block' }}>
-                    <div className="modal-content">
-                        <span className="close" onClick={closeModal}>
-                            &times;
-                        </span>
-                        {bookingItems.map((item, index) => {
-                            const {
-                                price,
-                                name,
-                                seriamNumber,
-                                email,
-                                phoneNumber,
-                                bookDate,
-                                services,
-                            } = item;
-                            const qrData = [
-                                // `Ticket ${index + 1}:`,
-                                `trip name: ${title}`,
-                                `Booking ID: ${bookDetails.bookingId}`,
-                                `Serial Number: ${seriamNumber}`,
-                                `Booking Date: ${formatDate(bookDate)}`,
-                                `Booking on: ${formatDate(currentDate)}`,
-                                `Name: ${name}`,
-                                email ? `Email: ${email}` : '',
-                                phoneNumber ? `Phone Number: ${phoneNumber}` : '',
-                                services.length
-                                    ? `Services: ${services
-                                          .map(service => service.name)
-                                          .join(', ')}`
-                                    : 'Services: No services',
-                                `Total Price: ${price} EGP`,
-                            ]
-                                .filter(line => line.trim() !== '')
-                                .join('\n');
+            <Dialog open={showModal} onClose={closeModal} fullWidth>
+                <DialogContent style={{ textAlign: 'center' }}>
+                    {bookingItems.map((item, index) => {
+                        const {
+                            price,
+                            name,
+                            seriamNumber,
+                            email,
+                            phoneNumber,
+                            bookDate,
+                            services,
+                        } = item;
 
-                            return (
-                                <div key={index} className="card mb-3">
-                                    <div className="card-body">
-                                        <QRCode className="m-auto mb-3" value={qrData} size={250} />
-                                        {/* <p>
-                                            <strong className="main-color">
-                                                Ticket {index + 1}
-                                            </strong>
-                                        </p> */}
-                                        <p>
-                                            <strong className="main-color">Booking ID:</strong>{' '}
-                                            {bookDetails.bookingId}
-                                        </p>
-                                        <p>
-                                            <strong className="main-color">trip name:</strong>{' '}
-                                            {title}
-                                        </p>
-                                        <p>
-                                            <strong className="main-color">Serial Number:</strong>{' '}
-                                            {seriamNumber}
-                                        </p>
-                                        <p>
-                                            <strong className="main-color">Name:</strong> {name}
-                                        </p>
-                                        {email && (
-                                            <p>
-                                                <strong className="main-color">Email:</strong>{' '}
-                                                {email}
-                                            </p>
-                                        )}
-                                        {phoneNumber && (
-                                            <p>
-                                                <strong className="main-color">
-                                                    Phone Number:
-                                                </strong>{' '}
-                                                {phoneNumber}
-                                            </p>
-                                        )}
+                        const qrData = [
+                            `Booking ID: ${bookDetails.bookingId}`,
+                            `Trip name: ${title}`,
+                            `Name: ${name}`,
+                            email ? `Email: ${email}` : '',
+                            phoneNumber ? `Phone Number: ${phoneNumber}` : '',
+                            `Serial Number: ${seriamNumber}`,
+                            `Booking on: ${formatDate(currentDate)}`,
+                            `Booking Date: ${formatDate(bookDate)}`,
+                            services.length
+                                ? `Services: ${services.map(service => service.name).join(', ')}`
+                                : 'Services: No services',
+                            price > 0 ? `Total Services Price: ${price} EGP` : '',
+                        ]
+                            .filter(line => line.trim() !== '')
+                            .join('\n');
 
-                                        <p>
-                                            <strong className="main-color">Booking on:</strong>{' '}
-                                            {formatDate(currentDate)}
-                                        </p>
-
-                                        <p>
-                                            <strong className="main-color">Booking Date:</strong>{' '}
-                                            {formatDate(bookDate)}
-                                        </p>
-                                        <h5 className="main-color">Services:</h5>
-                                        {services.length > 0 ? (
-                                            services.map((service, serviceIndex) => (
-                                                <div key={serviceIndex}>
-                                                    <p>{service.name}</p>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <p>No services</p>
-                                        )}
-                                        <h5>
-                                            <strong className="main-color">Total Price:</strong>{' '}
-                                            {price} EGP
-                                        </h5>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            )}
+                        return (
+                            <div
+                                key={index}
+                                className="qr-box"
+                                style={{
+                                    marginBottom: '20px',
+                                    border: '1px solid black',
+                                    padding: '20px',
+                                }}
+                            >
+                                <QRCode value={qrData} className="qr-size" size={200} />
+                                <p>
+                                    <strong className="main-color">Booking ID:</strong>{' '}
+                                    {bookDetails.bookingId}
+                                </p>
+                                <p>
+                                    <strong className="main-color">Trip Name:</strong> {title}
+                                </p>
+                                <p>
+                                    <strong className="main-color">Serial Number:</strong>{' '}
+                                    {seriamNumber}
+                                </p>
+                                <p>
+                                    <strong className="main-color">Name:</strong> {name}
+                                </p>
+                                {email && (
+                                    <p>
+                                        <strong className="main-color">Email:</strong> {email}
+                                    </p>
+                                )}
+                                {phoneNumber && (
+                                    <p>
+                                        <strong className="main-color">Phone Number:</strong>{' '}
+                                        {phoneNumber}
+                                    </p>
+                                )}
+                                <p>
+                                    <strong className="main-color">Booking on:</strong>{' '}
+                                    {formatDate(currentDate)}
+                                </p>
+                                <p>
+                                    <strong className="main-color">Booking Date:</strong>{' '}
+                                    {formatDate(bookDate)}
+                                </p>
+                                <h5 className="main-color">Services:</h5>
+                                {services.length > 0 ? (
+                                    services.map((service, serviceIndex) => (
+                                        <div key={serviceIndex}>
+                                            <p>{service.name}</p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p>No services</p>
+                                )}
+                                {price > 0 && (
+                                    <p>
+                                        <strong className="main-color">
+                                            Total Services Price:
+                                        </strong>{' '}
+                                        {price} EGP
+                                    </p>
+                                )}
+                            </div>
+                        );
+                    })}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeModal} className="btn-main">
+                        Close
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };

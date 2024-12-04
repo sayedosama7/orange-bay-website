@@ -1,11 +1,34 @@
-import React, { useState } from 'react';
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { Loading } from '../Loading/Loading';
 
 const Payment = ({ bookDetail, handleNext }) => {
-  const { adults, children, totalPrice, addTionalServices = [], title, selectedDate, id, currentDate } = bookDetail;
-  const [loading, setLoading] = useState(false)
-  const additionalServicesTotal = addTionalServices.reduce((total, service) => total + service.price, 0);
+  const { adults, children, currentDate } = bookDetail;
+
+  const [loading, setLoading] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [addTionalServices, setAddTionalServices] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [additionalServices, setAdditionalServices] = useState([]);
+
+  useEffect(() => {
+    const storedDetails = localStorage.getItem('bookingUserDetails');
+    if (storedDetails) {
+      const parsedDetails = JSON.parse(storedDetails);
+      setSelectedDate(parsedDetails.bookingDate || null);
+      setAddTionalServices(parsedDetails.details?.flatMap(detail => detail.addTionalServices) || []);
+      setTotalPrice(parsedDetails.price || 0);
+      setAdditionalServices(parsedDetails.additionalServices);
+
+      const uniqueServices = [
+        ...new Map(parsedDetails.additionalServices.map(service => [service.id, service])).values()
+      ];
+      setAdditionalServices(uniqueServices);
+
+    }
+  }, []);
+
   const formatDate = (date) => {
     if (!date) return 'No date selected';
     try {
@@ -20,36 +43,43 @@ const Payment = ({ bookDetail, handleNext }) => {
     }
   };
 
-
   const handleCashPay = async () => {
     const storedDetails = localStorage.getItem('bookingUserDetails');
 
-    const token = localStorage.getItem('token');
     if (!storedDetails) {
       console.error('No booking details found!');
       return;
     }
 
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No token found!');
+      return;
+    }
+
     const parsedDetails = JSON.parse(storedDetails);
-    const { adults, children } = parsedDetails;
 
-    const allDetails = [
-      ...adults,
-      ...children
-    ];
-
-
-    const serviceIds = addTionalServices.map(service => service.id);
+    const details = parsedDetails.details || [];
+    if (!Array.isArray(details) || details.length === 0) {
+      console.error("Details are missing or invalid in bookingUserDetails.");
+      return;
+    }
 
     const data = {
-      ticketId: id,
-      currentDate: currentDate,
-      price: totalPrice,
-      numberOfAdults: adults.length,
-      numberOfChilds: children.length,
-      details: allDetails,
-      addTionalServices: serviceIds,
-      bookingDate: new Date(selectedDate).toISOString(),
+      ticketId: parsedDetails.ticketId || parsedDetails.id,
+      currentDate: parsedDetails.bookingDate || parsedDetails.currentDate,
+      price: parsedDetails.price || 0,
+      numberOfAdults: parsedDetails.numberOfAdults || 0,
+      numberOfChilds: parsedDetails.numberOfChilds || 0,
+      details: details.map(detail => ({
+        phoneNumber: detail.phoneNumber,
+        addTionalServices: detail.addTionalServices || [],
+        totalAdtionalPrice: detail.totalAdtionalPrice || 0,
+        name: detail.name,
+        email: detail.email,
+        personAge: detail.personAge || 0,
+      })),
+      bookingDate: parsedDetails.bookingDate || new Date().toISOString(),
     };
 
     try {
@@ -94,18 +124,11 @@ const Payment = ({ bookDetail, handleNext }) => {
     }
   };
 
-
-  const personAge = {
-    1: 'Adult',
-    2: 'Child',
-  };
-
   return (
     <div className="container text-capitalize mt-5">
       <div className="row">
         {loading && <Loading />}
 
-        {/* pay buttons  */}
         <div className="col-md-6 d-flex flex-column justify-content-center">
           <button className="btn btn-warning btn-lg mb-3">
             <img src="img/paypal.svg" alt="" />
@@ -114,16 +137,17 @@ const Payment = ({ bookDetail, handleNext }) => {
             <i className="fas fa-credit-card mr-1"></i>
             <span>Debit or Credit Card</span>
           </button>
-          <button className="btn btn-primary btn-lg fw-bold text-capitalize"
-            onClick={handleCashPay}>
+          <button
+            className="btn btn-primary btn-lg fw-bold text-capitalize"
+            onClick={handleCashPay}
+          >
             Cash Pay
           </button>
         </div>
 
-        {/* booking-summary */}
         <div className="booking-summary col-md-5 m-auto">
           <h4 className='main-color text-center mb-4 border p-2 rounded-3 mt-2'>Booking Details</h4>
-          <p className='main-color fw-bold'>trip name :<span className='text-dark ml-1'>{title}</span></p>
+          <p className='main-color fw-bold'>trip name :<span className='text-dark ml-1'>{bookDetail.title}</span></p>
           <p className='main-color fw-bold'>
             booking date :
             <span className='text-dark ml-1'>
@@ -136,52 +160,29 @@ const Payment = ({ bookDetail, handleNext }) => {
               {formatDate(currentDate)}
             </span>
           </p>
-
           <p className='main-color fw-bold'>Number of Adults :<span className='text-dark ml-1'>{adults}</span></p>
           <p className='main-color fw-bold'>Number of Children :<span className='text-dark ml-1'>{children}</span></p>
           <span className='main-color fw-bold m-0'>Additional Services : </span>
-          {addTionalServices.length > 0 ? (
-            addTionalServices.map((service, index) => (
-              <div className='d-flex justify-content-between align-items-lg-center align-items-start flex-lg-row flex-column' key={index}>
+          {additionalServices && additionalServices.length > 0 ? (
+            additionalServices.map((service, index) => (
+              <div
+                key={index}
+              >
                 <div className='mt-2 fw-bold'>
-                  <span className='main-color'>name :{" "}</span>
-                  <span>
-                    {service.name}
-                  </span>
-                </div>
-
-                <div className='mt-2 fw-bold'>
-                  <span className='main-color'>
-                    price :{" "}
-                  </span>
-                  <span>
-                    {service.price} EGP
-                  </span>
-                </div>
-
-                <div className='mt-2 fw-bold'>
-                  <span className='main-color'>for{" "}</span>
-                  <span> ({personAge[service.personAge]})</span>
+                  <span>{service.name || 'No Name'}</span>
                 </div>
               </div>
             ))
           ) : (
-            <span className='mt-2'>None</span>
+            <span className='mt-2'>No additional services available.</span>
           )}
 
-          {addTionalServices.length > 0 && (
-            <div className='mt-2 fw-bold'>
-              <span className='main-color'>total price for services : </span>
-              <span>{additionalServicesTotal} EGP</span>
-            </div>
-          )}
           <hr />
           <div className='d-flex justify-content-between align-items-center'>
             <h5 className='main-color fw-bold'>Total Price :</h5>
             <h6 className='text-dark ml-1'>{totalPrice} EGP</h6>
           </div>
         </div>
-
       </div>
     </div>
   );
