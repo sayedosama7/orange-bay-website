@@ -6,12 +6,17 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Overview from './Overview';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router';
+import MySlider from '../homepage/slider';
+import { useDispatch, useSelector } from 'react-redux';
+import { setBookingDetails } from '../../store/Booking/bookingSlice';
 
 export default function Details() {
     const [selectedDate, setSelectedDate] = useState(null);
     const [adults, setAdults] = useState(0);
     const [children, setChildren] = useState(0);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const cart = useSelector(state => state.cart.items);
 
     const handleIncrement = type => {
         if (type === 'adults') {
@@ -29,9 +34,8 @@ export default function Details() {
         }
     };
     const handleDateChange = date => {
-        const timeZone = 'Africa/Cairo';
-        const localDate = new Date(date);
-        localDate.setHours(12, 0, 0, 0);
+        if (!date) return;
+        const localDate = new Date(date.setHours(12, 0, 0, 0));
         setSelectedDate(localDate);
     };
 
@@ -44,6 +48,20 @@ export default function Details() {
     });
 
     const handleBookNow = () => {
+        const ticketExists = cart.some(item => item.ticketId === overviewData.id);
+
+        if (ticketExists) {
+            Swal.fire({
+                text: 'This ticket is already in your cart!',
+                icon: 'warning',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+            return;
+        }
         if (!selectedDate) {
             Swal.fire({
                 icon: 'error',
@@ -78,6 +96,7 @@ export default function Details() {
 
         const bookDetail = {
             title: overviewData.title,
+            ticketImg: overviewData.ticketImg,
             id: overviewData.id,
             selectedDate: selectedDate.toISOString().split('T')[0],
             currentDate: new Date().toISOString(),
@@ -86,131 +105,134 @@ export default function Details() {
             adultPrice: overviewData.adultPrice,
             childPrice: overviewData.childPrice,
         };
-        localStorage.setItem('bookDetail', JSON.stringify(bookDetail));
-        navigate('/booking');
+        dispatch(setBookingDetails(bookDetail));
+        navigate('/user-data');
     };
 
     return (
-        <div className="container mt-5">
-            <div className="row">
-                <div className="col-md-6">
-                    <Overview onDataUpdate={setOverviewData} />
-                </div>
-                <div className="col-md-1"></div>
+        <>
+            <MySlider />
+            <div className="container mt-5">
+                <div className="row">
+                    <div className="col-md-6">
+                        <Overview onDataUpdate={setOverviewData} />
+                    </div>
+                    <div className="col-md-1"></div>
 
-                <div className="col-md-5">
-                    <div className="card mt-4">
-                        {/* date */}
-                        <div className="card-header text-center qq">
-                            {/* Date picker */}
-                            <div
-                                className="input-group"
-                                style={{ display: 'flex', justifyContent: 'center' }}
-                            >
-                                <DatePicker
-                                    selected={selectedDate}
-                                    onChange={handleDateChange}
-                                    dateFormat="dd/MM/yyyy"
-                                    className="form-control text-center"
-                                    minDate={new Date()}
-                                    placeholderText="Select a date"
-                                    filterDate={date => {
-                                        const today = new Date();
-                                        return date > today;
-                                    }}
-                                />
+                    <div className="col-md-5">
+                        <div className="card mt-4">
+                            {/* date */}
+                            <div className="card-header text-center qq">
+                                {/* Date picker */}
+                                <div
+                                    className="input-group"
+                                    style={{ display: 'flex', justifyContent: 'center' }}
+                                >
+                                    <DatePicker
+                                        selected={selectedDate}
+                                        onChange={handleDateChange}
+                                        dateFormat="dd/MM/yyyy"
+                                        className="form-control text-center"
+                                        minDate={new Date()}
+                                        placeholderText="Select a date"
+                                        filterDate={date => {
+                                            const today = new Date();
+                                            return date > today;
+                                        }}
+                                    />
 
-                                <div className="input-group-append">
-                                    <span className="input-group-text">
-                                        <i className="fa-regular fa-calendar"></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* adult and child counter  */}
-                        <div className="p-3">
-                            {/* adult  */}
-                            <div className="d-flex justify-content-between flex-wrap">
-                                <div className="d-flex flex-lg-row flex-column ">
-                                    <h5 className="main-color">Adults</h5>
-                                    <span
-                                        className="ml-2 pt-1 text-muted fw-bold"
-                                        style={{ fontSize: '14px' }}
-                                    >
-                                        {overviewData.adultPrice
-                                            ? `(${overviewData.adultPrice} EGP)`
-                                            : 'Price not available'}
-                                    </span>
-                                </div>
-                                <div className="">
-                                    <div className="input-group we1">
-                                        <i
-                                            className="fa-sharp fa-solid main-color fa-circle-minus mt-1"
-                                            style={{ cursor: 'pointer' }}
-                                            onClick={() => handleDecrement('adults')}
-                                        ></i>
-                                        <input
-                                            type="number"
-                                            className="form-control innn text-center ml-2"
-                                            id="adults"
-                                            value={adults}
-                                            readOnly
-                                        />
-                                        <i
-                                            className="fa-solid fa-circle-plus mt-1"
-                                            style={{ cursor: 'pointer' }}
-                                            onClick={() => handleIncrement('adults')}
-                                        ></i>
+                                    <div className="input-group-append">
+                                        <span className="input-group-text">
+                                            <i className="fa-regular fa-calendar"></i>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* children  */}
-                            <div className="d-flex justify-content-between flex-wrap mt-2">
-                                <div className="d-flex flex-lg-row flex-column ">
-                                    <h5 className="main-color">Children</h5>
-                                    <span
-                                        className="ml-2 pt-1 text-muted fw-bold"
-                                        style={{ fontSize: '14px' }}
-                                    >
-                                        {overviewData.childPrice
-                                            ? `(${overviewData.childPrice} EGP)`
-                                            : 'Price not available'}
-                                    </span>
-                                </div>
+                            {/* adult and child counter  */}
+                            <div className="p-3">
+                                {/* adult  */}
                                 <div className="d-flex justify-content-between flex-wrap">
-                                    <div className="input-group we1">
-                                        <i
-                                            className="fa-sharp fa-solid fa-circle-minus mt-1"
-                                            style={{ cursor: 'pointer' }}
-                                            onClick={() => handleDecrement('children')}
-                                        ></i>
-                                        <input
-                                            type="number"
-                                            className="form-control innn text-center ml-2"
-                                            id="children"
-                                            value={children}
-                                            readOnly
-                                        />
-                                        <i
-                                            className="fa-solid fa-circle-plus mt-1"
-                                            style={{ cursor: 'pointer' }}
-                                            onClick={() => handleIncrement('children')}
-                                        ></i>
+                                    <div className="d-flex flex-lg-row flex-column ">
+                                        <h5 className="main-color">Adults</h5>
+                                        <span
+                                            className="ml-2 pt-1 text-muted fw-bold"
+                                            style={{ fontSize: '14px' }}
+                                        >
+                                            {overviewData.adultPrice
+                                                ? `(${overviewData.adultPrice} EGP)`
+                                                : 'Price not available'}
+                                        </span>
+                                    </div>
+                                    <div className="">
+                                        <div className="input-group we1">
+                                            <i
+                                                className="fa-sharp fa-solid main-color fa-circle-minus mt-1"
+                                                style={{ cursor: 'pointer' }}
+                                                onClick={() => handleDecrement('adults')}
+                                            ></i>
+                                            <input
+                                                type="number"
+                                                className="form-control innn text-center ml-2"
+                                                id="adults"
+                                                value={adults}
+                                                readOnly
+                                            />
+                                            <i
+                                                className="fa-solid fa-circle-plus mt-1"
+                                                style={{ cursor: 'pointer' }}
+                                                onClick={() => handleIncrement('adults')}
+                                            ></i>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div className="d-flex justify-content-center my-4">
-                                <button className="book" onClick={handleBookNow}>
-                                    Book Now
-                                </button>
+                                {/* children  */}
+                                <div className="d-flex justify-content-between flex-wrap mt-2">
+                                    <div className="d-flex flex-lg-row flex-column ">
+                                        <h5 className="main-color">Children</h5>
+                                        <span
+                                            className="ml-2 pt-1 text-muted fw-bold"
+                                            style={{ fontSize: '14px' }}
+                                        >
+                                            {overviewData.childPrice
+                                                ? `(${overviewData.childPrice} EGP)`
+                                                : 'Price not available'}
+                                        </span>
+                                    </div>
+                                    <div className="d-flex justify-content-between flex-wrap">
+                                        <div className="input-group we1">
+                                            <i
+                                                className="fa-sharp fa-solid fa-circle-minus mt-1"
+                                                style={{ cursor: 'pointer' }}
+                                                onClick={() => handleDecrement('children')}
+                                            ></i>
+                                            <input
+                                                type="number"
+                                                className="form-control innn text-center ml-2"
+                                                id="children"
+                                                value={children}
+                                                readOnly
+                                            />
+                                            <i
+                                                className="fa-solid fa-circle-plus mt-1"
+                                                style={{ cursor: 'pointer' }}
+                                                onClick={() => handleIncrement('children')}
+                                            ></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="d-flex justify-content-center my-4">
+                                    <button className="book" onClick={handleBookNow}>
+                                        Continue
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }

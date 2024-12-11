@@ -20,9 +20,9 @@ a, p{
     font-weight:600;
 } */
 
-a, button, input, textarea, select{
+/* a, button, input, textarea, select{
     outline:none !important;
-}
+} */
 
 fieldset{
     border:0;

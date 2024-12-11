@@ -5,7 +5,7 @@ import "../../css/footer.css";
 const Footer = () => {
   return (
     <footer className="padding_4x mt-5">
-      <div className="flex">
+      {/* <div className="flex">
         <section className="flex-content padding_1x ml-3">
           <h5 className="text-white">About Us</h5>
           <a href="#">Contact Us</a>
@@ -50,7 +50,7 @@ const Footer = () => {
             <i className="fab fa-twitter fa-lg mr-5"></i>
           </div>
         </section>
-      </div>
+      </div> */}
       <div className="flex">
         <section className="flex-content padding_1x">
           <p>Orange Bay.©2023 - All rights reserved </p>

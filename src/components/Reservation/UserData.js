@@ -7,12 +7,18 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { ADDTIONALSERVICES, baseURL } from '../Api/Api';
 import { Loading } from '../Loading/Loading';
-import { format } from 'date-fns';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { addItemToCart } from '../../store/Cart/cartSlice';
+import Swal from 'sweetalert2';
 
-const UserData = ({ bookDetail, handleNext }) => {
+const UserData = () => {
   const [allServices, setAllServices] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { adults, children, id, adultPrice, childPrice ,selectedDate } = bookDetail;  
+  const navigate = useNavigate()
+  const dispatch = useDispatch();
+
+  const bookingDetails = useSelector((state) => state.booking.bookingDetails);
 
   const [formData, setFormData] = useState({
     adults: [],
@@ -46,17 +52,17 @@ const UserData = ({ bookDetail, handleNext }) => {
   }, []);
 
   useEffect(() => {
-    if (adults > 0 && children >= 0) {
+    if (bookingDetails.adults > 0 && bookingDetails.children >= 0) {
       setFormData({
-        adults: Array(adults).fill({ name: '', email: '', phoneNumber: '', addtionalServices: [] }),
-        children: Array(children).fill({ name: '', addtionalServices: [] }),
+        adults: Array(bookingDetails.adults).fill({ name: '', email: '', phoneNumber: '', addtionalServices: [] }),
+        children: Array(bookingDetails.children).fill({ name: '', addtionalServices: [] }),
       });
       setErrors({
-        adults: Array(adults).fill({ name: '', email: '', phoneNumber: '' }),
-        children: Array(children).fill({ name: '' }),
+        adults: Array(bookingDetails.adults).fill({ name: '', email: '', phoneNumber: '' }),
+        children: Array(bookingDetails.children).fill({ name: '' }),
       });
     }
-  }, [adults, children]);
+  }, [bookingDetails.adults, bookingDetails.children]);
 
   const handleChange = (type, index, field, value) => {
     const updatedData = [...formData[type]];
@@ -110,8 +116,8 @@ const UserData = ({ bookDetail, handleNext }) => {
 
     let totalPrice = 0;
 
-    const adultTicketPrice = adults * adultPrice;
-    const childTicketPrice = children * childPrice;
+    const adultTicketPrice = bookingDetails.adults * bookingDetails.adultPrice;
+    const childTicketPrice = bookingDetails.children * bookingDetails.childPrice;
     totalPrice += adultTicketPrice + childTicketPrice;
 
     const details = [
@@ -153,17 +159,31 @@ const UserData = ({ bookDetail, handleNext }) => {
       ...formData.children.flatMap(child => child.addtionalServices),
     ];
     const payload = {
-      ticketId: id,
+      ticketId: bookingDetails.id,
+      adultPrice: bookingDetails.adultPrice,
+      childPrice: bookingDetails.childPrice,
+      ticketImg: bookingDetails.ticketImg,
+      ticketName: bookingDetails.title,
+      currentDate: bookingDetails.currentDate,
       price: totalPrice,
       numberOfAdults: formData.adults.length,
       numberOfChilds: formData.children.length,
       details,
       additionalServices,
-      bookingDate: format(selectedDate, 'yyyy-MM-dd'),
-
+      bookingDate: bookingDetails.selectedDate,
     };
-    localStorage.setItem('bookingUserDetails', JSON.stringify(payload));
-    handleNext(payload.additionalServices);
+
+    dispatch(addItemToCart(payload));
+    Swal.fire({
+      text: 'Successfully added to cart!',
+      icon: 'success',
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+    });
+    navigate("/program")
   };
 
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -371,7 +391,7 @@ const UserData = ({ bookDetail, handleNext }) => {
           </div>
 
           <div className="d-flex justify-content-center">
-            <button className='mt-lg-4 mt-3 btn-main btn pay-btn' onClick={handleSubmit} >pay</button>
+            <button className='mt-lg-4 mt-3 btn-main btn pay-btn' onClick={handleSubmit} >Add To Cart</button>
           </div>
         </div>
       </div >

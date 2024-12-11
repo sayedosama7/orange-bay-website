@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -19,7 +19,11 @@ const UpcomingReservations = () => {
     const [openDialog, setOpenDialog] = useState(false);
 
     // Fetch reservation
-    const fetchData = async () => {
+
+    const fetchData = useCallback(async () => {
+        if (upcomingReservations.length > 0) {
+            return;
+        }
         const token = localStorage.getItem("token");
         setLoading(true);
         try {
@@ -34,16 +38,17 @@ const UpcomingReservations = () => {
             const upcomingReservations = response.data.value?.upcommingRservations || [];
             setUpcomingReservations(upcomingReservations);
         } catch (error) {
-            setLoading(false);
             console.error('Error fetching data:', error);
+            setLoading(false);
         } finally {
             setLoading(false);
         }
-    };
+    }, [upcomingReservations.length]);
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [fetchData]);
+
 
     const handleOpenDialog = (reservation) => {
         setSelectedBookingItems(reservation.bookingItems || []);
@@ -54,6 +59,11 @@ const UpcomingReservations = () => {
         setOpenDialog(false);
         setSelectedBookingItems([]);
     };
+
+    const payment = {
+        "0": "unpaid",
+        "1": "paid",
+    }
 
     return (
         <div>
@@ -94,6 +104,9 @@ const UpcomingReservations = () => {
                                                             <Typography variant="body2" color="text.secondary">
                                                                 <span className="main-color">Number Of Childs:</span> {reservation.numberOfChilds}
                                                             </Typography>
+                                                            <Typography variant="body1">
+                                                                <span className="main-color">payment:</span>{" "} <span className='text-danger fw-bold'>{payment[reservation.payment]}</span>
+                                                            </Typography>
                                                             <Typography variant="body2" color="text.secondary">
                                                                 <span className="main-color">Total Price:</span> {reservation.totalPrice} $
                                                             </Typography>
@@ -102,7 +115,7 @@ const UpcomingReservations = () => {
                                                             </Typography>
                                                         </CardContent>
                                                     </div>
-                                                    <CardActions className='d-flex justify-content-between px-0'>
+                                                    <CardActions className='d-flex justify-content-between px-4'>
                                                         <button onClick={() => handleOpenDialog(reservation)} className='btn btn-main p-2 text-capitalize'>details</button>
                                                         <button className='btn btn-danger p-2 text-capitalize'>Cancel</button>
                                                     </CardActions>

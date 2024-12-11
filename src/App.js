@@ -10,10 +10,13 @@ import Footer from './components/homepage/Footer';
 import Login from './components/Login/Login';
 import Details from './components/Reservation/Details';
 import Success from './components/Reservation/Success';
-import BookingStepper from './components/Reservation/Stepper';
+// import BookingStepper from './components/Reservation/Stepper';
 import { Provider } from 'react-redux';
 import { store } from './store/store';
 import MyReservation from './components/MyReservation/MyReservation';
+import UserData from './components/Reservation/UserData';
+import Cart from './components/Reservation/Cart';
+import BookingStepper from './components/Reservation/Stepper';
 function App() {
   return (
     <Provider store={store}>
@@ -30,7 +33,10 @@ function App() {
         <Route path='/gallery' element={<FirstGallery />} />
         <Route path="/login" element={<Login />} />
         <Route path="/success" element={<Success />} />
-        <Route path="/booking" element={<BookingStepper />} />
+        <Route path="/booking/:step" element={<BookingStepper />} />
+        <Route path="/cart" element={<BookingStepper />} />
+        <Route path="/user-data" element={<UserData />} />
+        <Route path="/cart" element={<Cart />} />
         <Route path="/my-reservation" element={<MyReservation />} />
       </Routes>
       <Footer />

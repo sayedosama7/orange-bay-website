@@ -13,6 +13,21 @@
   border: none;
 }
 
+.cart-count {
+  position: absolute;
+  top: -10px;
+  right: -5px;
+  background-color: #E07026;
+  padding: 0px 7px;
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+}
+
+.fa-cart-shopping {
+  font-size: 20px;
+}
+
 .modal {
   position: fixed;
   top: 0;
@@ -60,6 +75,12 @@
   background-color: #E07026 !important;
   color: #fff !important;
   border-radius: 5px;
+}
+
+select {
+  -webkit-appearance: menulist-button !important;
+  -moz-appearance: menulist-button !important;
+  appearance: menulist-button !important;
 }
 
 .css-1qltlow-MuiTabs-indicator,
@@ -249,10 +270,85 @@ body {
   width: 100%;
 }
 
+.fa-cart-shopping:hover {
+  border-bottom: 1px solid orange;
+  color: orange;
+}
+
+.fa-cart-shopping:focus {
+  color: orange !important;
+  border-bottom: solid 1px orange !important;
+}
+
+.card-btn {
+  width: 150px;
+  height: 50px;
+  border-radius: 8px;
+  color: white;
+  background-color: #094e6c;
+  font-weight: 600;
+  border: none;
+  font-size: 17px;
+}
+
+.card-btn-clear {
+  background-color: #E07026;
+}
+
+.remove-icon-card {
+  color: white;
+  /* opacity: .8; */
+  cursor: pointer;
+  font-size: 20px;
+  transition: all .5s ease;
+  z-index: 100;
+  background-color: rgba(14, 13, 13, 0.692);
+  padding: 1px 10px;
+  border-radius: 50%;
+
+}
+
+.remove-icon-card:hover {
+  color: red;
+}
+
+.ticket-img {
+  position: relative;
+}
+
+.ticket-img::before {
+  position: absolute;
+  content: "";
+  background-color: rgba(0, 0, 0, 0.103);
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.empty-cart {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #E07026;
+  padding-top: 5%;
+  padding-bottom: 6.6%;
+}
+
+.css-1lt5qva-MuiCardContent-root:last-child,
+.css-1lt5qva-MuiCardContent-root {
+  padding: 10px !important;
+}
+
 @media(max-width:768px) {
   .all-login {
     background: none;
     height: auto;
+  }
+
+  .card-btn {
+    width: 100%;
   }
 
   .login-form {
@@ -270,5 +366,9 @@ body {
   .pay-btn {
     display: block !important;
     width: 100%;
+  }
+
+  .navbar-expand .navbar-nav {
+    flex-wrap: wrap;
   }
 }

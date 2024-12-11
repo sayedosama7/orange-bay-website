@@ -1,124 +1,194 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import { Loading } from '../Loading/Loading';
-import { toZonedTime, format } from 'date-fns-tz';
-
-const Payment = ({ bookDetail, handleNext }) => {
-  const { adults, children, currentDate, selectedDate } = bookDetail;
-
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import { baseURL, CRUISES, HARBOURES, NATIONALITY, ORDER_CREATE, TOURGUIDE } from '../Api/Api';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import CircularProgress from '@mui/material/CircularProgress';
+import { clearCart } from '../../store/Cart/cartSlice';
+const Payment = ({ handleNext }) => {
+  const [boats, setBoats] = useState([]);
+  const [guides, setGuides] = useState([]);
+  const [nationalities, setNationalities] = useState([]);
+  const [harbours, setHarbours] = useState([]);
+  const [selectedHarbour, setSelectedHarbour] = useState("");
+  const [selectedBoats, setSelectedBoats] = useState("");
+  const [selectedGuides, setSelectedGuides] = useState("");
+  const [selectedNationalities, setSelectedNationalities] = useState("");
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [addTionalServices, setAddTionalServices] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
-  const [additionalServices, setAdditionalServices] = useState([]);
+  const [boatingError, setBoatingError] = useState('');
+  const [guideError, setGuideError] = useState('');
+  const [nationalityError, setNationalityError] = useState('');
+  const [harbourError, setHarbourError] = useState('');
 
-  useEffect(() => {
-    const storedDetails = localStorage.getItem('bookingUserDetails');
-    if (storedDetails) {
-      const parsedDetails = JSON.parse(storedDetails);
-      setAddTionalServices(parsedDetails.details?.flatMap(detail => detail.addTionalServices) || []);
-      setTotalPrice(parsedDetails.price || 0);
-      setAdditionalServices(parsedDetails.additionalServices);
+  const cartItems = useSelector((state) => state.cart.items);
 
-      const uniqueServices = [
-        ...new Map(parsedDetails.additionalServices.map(service => [service.id, service])).values()
-      ];
-      setAdditionalServices(uniqueServices);
+  const dispatch = useDispatch()
 
+  const handleOpenDialog = (e) => {
+    e.preventDefault();
+
+    let valid = true;
+
+    if (!selectedBoats) {
+      setBoatingError('Please select a Cruise');
+      valid = false;
     }
-  }, []);
+    if (!selectedGuides) {
+      setGuideError('Please select a Tour Guide');
+      valid = false;
+    }
+    if (!selectedNationalities) {
+      setNationalityError('Please select a Nationality');
+      valid = false;
+    }
+    if (!selectedHarbour) {
+      setHarbourError('Please select a Marina');
+      valid = false;
+    }
 
-  const formatDate = (date) => {
-    if (!date) return 'No date selected';
-    try {
-      const zonedDate = toZonedTime(date, 'Africa/Cairo');
-      return format(zonedDate, 'dd/MM/yyyy');
-    } catch (error) {
-      console.error('Invalid date:', date);
-      return 'Invalid date';
+    if (valid) {
+      setOpen(true);
     }
   };
-  const handleCashPay = async () => {
-    const storedDetails = localStorage.getItem('bookingUserDetails');
 
-    if (!storedDetails) {
-      console.error('No booking details found!');
+  const handleCloseDialog = () => {
+    setOpen(false);
+  };
+
+  const handleBoatsChange = (event) => {
+    setSelectedBoats(event.target.value);
+    setBoatingError('');
+  };
+  const handleGuideChange = (event) => {
+    setSelectedGuides(event.target.value);
+    setGuideError('');
+  };
+  const handleNatChange = (event) => {
+    setSelectedNationalities(event.target.value);
+    setNationalityError('');
+  };
+  const handleHarbourChange = (event) => {
+    setSelectedHarbour(event.target.value);
+    setHarbourError('');
+  };
+
+  const fetchData = async (endpoint, setState, key = null, currentData = []) => {
+    if (currentData.length > 0) {
       return;
     }
-
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.error('No token found!');
-      return;
-    }
-
-    const parsedDetails = JSON.parse(storedDetails);
-
-    const details = parsedDetails.details || [];
-    if (!Array.isArray(details) || details.length === 0) {
-      console.error("Details are missing or invalid in bookingUserDetails.");
-      return;
-    }
-
-    const bookingDate = selectedDate ? toZonedTime(selectedDate, 'Africa/Cairo') : new Date();
-    const formattedBookingDate = format(bookingDate, 'yyyy-MM-dd', { timeZone: 'Africa/Cairo' });
-
-    const data = {
-      ticketId: parsedDetails.ticketId || parsedDetails.id,
-      currentDate: parsedDetails.bookingDate || parsedDetails.currentDate,
-      price: parsedDetails.price || 0,
-      numberOfAdults: parsedDetails.numberOfAdults || 0,
-      numberOfChilds: parsedDetails.numberOfChilds || 0,
-      details: details.map(detail => ({
-        phoneNumber: detail.phoneNumber,
-        addTionalServices: detail.addTionalServices || [],
-        totalAdtionalPrice: detail.totalAdtionalPrice || 0,
-        name: detail.name,
-        email: detail.email,
-        personAge: detail.personAge || 0,
-      })),
-      bookingDate: formattedBookingDate,
-    };
 
     try {
+      const token = localStorage.getItem('token');
       setLoading(true);
-      const response = await fetch('http://elgzeraapp.runasp.net/api/Booking/create', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+      const response = await axios.get(`${baseURL}/${endpoint}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
+      setState(key ? response.data[key] : response.data);
+    } catch (error) {
+      console.error(`Error fetching ${endpoint}:`, error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+  const fetchBoats = () => fetchData(CRUISES, setBoats, null, boats);
+  const fetchGuides = () => fetchData(TOURGUIDE, setGuides, null, guides);
+  const fetchNationalities = () => fetchData(NATIONALITY, setNationalities, null, nationalities);
+  const fetchHarbours = () => fetchData(HARBOURES, setHarbours, 'value', harbours);
+
+  const handleCashPay = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('token');
+
+      const calculateTotalPrice = (orderItems) => {
+        return (orderItems || []).reduce((total, item) => {
+          const itemTotal = (item.orderItemDetails || []).reduce(
+            (sum, detail) => sum + Number(detail.ticketPrice || 0),
+            0
+          );
+          return total + itemTotal;
+        }, 0);
+      };
+
+      if (!cartItems || !Array.isArray(cartItems)) {
+        throw new Error("Invalid cartItems structure");
       }
 
-      const result = await response.json();
-      localStorage.setItem('bookingResponse', JSON.stringify(result));
+      const payload = {
+        nationalityId: Number(selectedNationalities) || 0,
+        cruiseId: Number(selectedBoats) || 0,
+        tourGuideId: Number(selectedGuides) || 0,
+        harbourId: Number(selectedHarbour) || 0,
+        paymentDone: 1,
+        totalPrice: 0,
+        orderType: 2,
+        orderItems: cartItems.map(item => ({
+          orderItemDetails: (item.details || []).map(detail => ({
+            ticketId: Number(item.ticketId) || 0,
+            ticketPrice:
+              detail.personAge === 1
+                ? Number(item.adultPrice || 0) + Number(detail.totalAdtionalPrice || 0)
+                : detail.personAge === 2
+                  ? Number(item.childPrice || 0) + Number(detail.totalAdtionalPrice || 0)
+                  : Number(detail.totalAdtionalPrice || 0),
+            phoneNumber: detail.phoneNumber || "string",
+            name: detail.name || "string",
+            email: detail.email || "string",
+            adttionalServicesPrice: Number(detail.totalAdtionalPrice || 0),
+            personAge: Number(detail.personAge) || 1,
+            services: Array.isArray(detail.addTionalServices)
+              ? detail.addTionalServices.map(service => Number(service) || 0)
+              : [],
+            bookingDate: item.bookingDate,
+          })),
+          adultQuantity: Number(item.numberOfAdults) || 0,
+          childQuantity: Number(item.numberOfChilds) || 0,
+        })),
+      };
+
+      payload.totalPrice = calculateTotalPrice(payload.orderItems);
+
+      console.log("Final Payload:", JSON.stringify(payload, null, 2));
+
+      const response = await axios.post(
+        `${baseURL}/${ORDER_CREATE}`,
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      localStorage.setItem('bookingResponse', JSON.stringify(response.data));
 
       Swal.fire({
-        title: 'Booking Successful!',
-        text: 'Your booking was completed successfully. Click below to view the details.',
         icon: 'success',
-        confirmButtonText: 'Go to Details',
-        confirmButtonColor: '#E07026',
-      }).then(() => {
-        handleNext();
-        localStorage.removeItem("bookDetail");
-        localStorage.removeItem("bookingUserDetails");
+        title: 'Payment Successful!',
+        text: 'Your payment has been processed successfully.',
       });
+      localStorage.removeItem("cart");
+      dispatch(clearCart());
+
+      setOpen(false);
+      handleNext();
     } catch (error) {
-      setLoading(false);
-      console.error('Failed to complete booking:', error);
+      console.error('Error processing payment:', error);
 
       Swal.fire({
-        title: 'Error!',
-        text: 'Failed to complete the booking. Please try again.',
         icon: 'error',
-        confirmButtonText: 'Close',
+        title: 'Payment Failed',
+        text: 'An error occurred while processing your payment. Please try again.',
       });
+      setOpen(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -126,61 +196,138 @@ const Payment = ({ bookDetail, handleNext }) => {
     <div className="container text-capitalize mt-5">
       <div className="row">
         {loading && <Loading />}
+        <Box className="d-flex flex-wrap justify-content-center align-items-center">
 
-        <div className="col-md-6 d-flex flex-column justify-content-center">
-          <button className="btn btn-warning btn-lg mb-3">
-            <img src="img/paypal.svg" alt="" />
-          </button>
-          <button className="btn btn-dark btn-lg mb-3 text-capitalize">
-            <i className="fas fa-credit-card mr-1"></i>
-            <span>Debit or Credit Card</span>
-          </button>
-          <button
-            className="btn btn-primary btn-lg fw-bold text-capitalize"
-            onClick={handleCashPay}
-          >
-            Cash Pay
-          </button>
-        </div>
-
-        <div className="booking-summary col-md-5 m-auto">
-          <h4 className='main-color text-center mb-4 border p-2 rounded-3 mt-2'>Booking Details</h4>
-          <p className='main-color fw-bold'>trip name :<span className='text-dark ml-1'>{bookDetail.title}</span></p>
-          <p className='main-color fw-bold'>
-            booking date :
-            <span className='text-dark ml-1'>
-              {formatDate(selectedDate)}
-            </span>
-          </p>
-          <p className='main-color fw-bold'>
-            booking on :
-            <span className='text-dark ml-1'>
-              {formatDate(currentDate)}
-            </span>
-          </p>
-          <p className='main-color fw-bold'>Number of Adults :<span className='text-dark ml-1'>{adults}</span></p>
-          <p className='main-color fw-bold'>Number of Children :<span className='text-dark ml-1'>{children}</span></p>
-          <span className='main-color fw-bold m-0'>Additional Services : </span>
-          {additionalServices && additionalServices.length > 0 ? (
-            additionalServices.map((service, index) => (
-              <div
-                key={index}
-              >
-                <div className='mt-2 fw-bold'>
-                  <span>{service.name || 'No Name'}</span>
-                </div>
-              </div>
-            ))
-          ) : (
-            <span className='mt-2'>No additional services available.</span>
-          )}
-
-          <hr />
-          <div className='d-flex justify-content-between align-items-center'>
-            <h5 className='main-color fw-bold'>Total Price :</h5>
-            <h6 className='text-dark ml-1'>{totalPrice} EGP</h6>
+          {/* Cruise */}
+          <div className="mt-lg-0 mt-3 m-1">
+            <label htmlFor="CriuseId" className="d-flex">
+              Cruise
+            </label>
+            <select
+              name="CriuseId"
+              value={selectedBoats}
+              onClick={fetchBoats}
+              onChange={handleBoatsChange}
+              className="form-control"
+            >
+              <option value="">Choose Cruise</option>
+              {boats.map(boat => (
+                <option key={boat.id} value={boat.id}>
+                  {boat.name}
+                </option>
+              ))}
+            </select>
+            {boatingError && <div className="text-danger">{boatingError}</div>}
           </div>
+
+          {/* Tour Guide */}
+          <div className="mt-lg-0 mt-3 m-1">
+            <label htmlFor="TourGuideId" className="d-flex">
+              Tour Guide
+            </label>
+            <select
+              name="TourGuideId"
+              value={selectedGuides}
+              onClick={fetchGuides}
+              onChange={handleGuideChange}
+              className="form-control"
+            >
+              <option value="">Choose Tour Guide</option>
+              {guides.map(guide => (
+                <option key={guide.id} value={guide.id}>
+                  {guide.name}
+                </option>
+              ))}
+            </select>
+            {guideError && <div className="text-danger">{guideError}</div>}
+          </div>
+
+          {/* Nationality */}
+          <div className="mt-lg-0 mt-3 m-1">
+            <label htmlFor="NationalityId" className="d-flex">
+              Nationality
+            </label>
+            <select
+              name="NationalityId"
+              onClick={fetchNationalities}
+              value={selectedNationalities}
+              onChange={handleNatChange}
+              className="form-control"
+            >
+              <option value="">Choose Nationality</option>
+              {nationalities.map(nat => (
+                <option key={nat.id} value={nat.id}>
+                  {nat.name}
+                </option>
+              ))}
+            </select>
+            {nationalityError && <div className="text-danger">{nationalityError}</div>}
+          </div>
+
+          {/* Marina */}
+          <div className="mt-lg-0 mt-3 m-1">
+            <label htmlFor="HarbourId" className="d-flex">
+              Marina
+            </label>
+            <select
+              name="HarbourId"
+              onClick={fetchHarbours}
+              value={selectedHarbour}
+              onChange={handleHarbourChange}
+              className="form-control"
+            >
+              <option value="">Choose Marina</option>
+              {harbours.map(Harbour => (
+                <option key={Harbour.id} value={Harbour.id}>
+                  {Harbour.name}
+                </option>
+              ))}
+            </select>
+            {harbourError && <div className="text-danger">{harbourError}</div>}
+          </div>
+
+        </Box>
+        <div className='d-flex justify-content-center mt-4'>
+          <button
+            className="m-1 card-btn"
+            onClick={handleOpenDialog}
+          >
+            Pay
+          </button>
         </div>
+
+        {/* Payment Method Dialog */}
+        <Dialog open={open} onClose={handleCloseDialog} fullWidth maxWidth={"sm"}>
+          <DialogTitle className='text-center'>Choose Payment Method</DialogTitle>
+          <DialogContent>
+            <div className="col-md-12 d-flex flex-column justify-content-center">
+              <button className="btn btn-warning btn-lg mb-3">
+                <img src="/img/paypal.svg" alt="Paypal" />
+              </button>
+              <button className="btn btn-dark btn-lg mb-3 text-capitalize">
+                <i className="fas fa-credit-card mr-1"></i>
+                <span>Debit or Credit Card</span>
+              </button>
+              <button
+                className="btn btn-primary btn-lg fw-bold text-capitalize"
+                onClick={handleCashPay}
+                disabled={loading}
+              >
+                {loading ? (
+                  <CircularProgress size={24} color="inherit" />
+                ) : (
+                  'Cash Pay'
+                )}
+              </button>
+            </div>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog} color="error">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+
       </div>
     </div>
   );

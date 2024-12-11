@@ -55,6 +55,11 @@ const PastReservations = () => {
         setSelectedBookingItems([]);
     };
 
+    const payment = {
+        "0": "unpaid",
+        "1": "paid",
+    }
+
     return (
         <div>
             <div className="container text-center">
@@ -94,6 +99,9 @@ const PastReservations = () => {
                                                             <Typography variant="body2" color="text.secondary">
                                                                 <span className="main-color">Number Of Childs:</span> {reservation.numberOfChilds}
                                                             </Typography>
+                                                            <Typography variant="body1">
+                                                                <span className="main-color">payment:</span>{" "} <span className='text-danger fw-bold'>{payment[reservation.payment]}</span>
+                                                            </Typography>
                                                             <Typography variant="body2" color="text.secondary">
                                                                 <span className="main-color">Total Price:</span> {reservation.totalPrice} $
                                                             </Typography>
@@ -105,7 +113,6 @@ const PastReservations = () => {
 
                                                     <CardActions className='d-flex justify-content-between px-4'>
                                                         <button onClick={() => handleOpenDialog(reservation)} className='btn btn-main p-2 text-capitalize'>details</button>
-                                                        <button className='btn btn-danger p-2 text-capitalize'>Cancel</button>
                                                     </CardActions>
                                                 </div>
                                             </Card>
