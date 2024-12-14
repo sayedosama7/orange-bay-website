@@ -11,8 +11,32 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { addItemToCart } from '../../store/Cart/cartSlice';
 import Swal from 'sweetalert2';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Typography from '@mui/material/Typography';
 
 const UserData = () => {
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    const isValid = validateForm();
+    if (isValid) {
+      console.log('Selected Services:', selectedServices);
+      setOpen(true);
+    }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const [selectedServices, setSelectedServices] = useState({
+    adults: [],
+    children: [],
+  });
+
   const [allServices, setAllServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate()
@@ -70,10 +94,23 @@ const UserData = () => {
     setFormData({ ...formData, [type]: updatedData });
   };
 
+  // const handleServiceChange = (type, index, newValue) => {
+  //   const updatedData = [...formData[type]];
+  //   updatedData[index] = { ...updatedData[index], addtionalServices: newValue };
+  //   setFormData({ ...formData, [type]: updatedData });
+  // };
+
   const handleServiceChange = (type, index, newValue) => {
     const updatedData = [...formData[type]];
     updatedData[index] = { ...updatedData[index], addtionalServices: newValue };
+
     setFormData({ ...formData, [type]: updatedData });
+
+    const updatedSelectedServices = {
+      ...selectedServices,
+      [type]: updatedData.map(item => item.addtionalServices),
+    };
+    setSelectedServices(updatedSelectedServices);
   };
 
   const validateForm = () => {
@@ -171,7 +208,10 @@ const UserData = () => {
       details,
       additionalServices,
       bookingDate: bookingDetails.selectedDate,
+      srvPrice: calculateTotalServicesPrice()
     };
+    console.log(payload);
+
 
     dispatch(addItemToCart(payload));
     Swal.fire({
@@ -188,6 +228,30 @@ const UserData = () => {
 
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
+
+  const calculateTotalServicesPrice = () => {
+    let totalAdultsServices = selectedServices.adults.flat().reduce((acc, service) => {
+      return acc + (service.adultPrice * (service.count || 1));
+    }, 0);
+
+    let totalChildrenServices = selectedServices.children.flat().reduce((acc, service) => {
+      return acc + (service.childPrice * (service.count || 1));
+    }, 0);
+
+    return totalAdultsServices + totalChildrenServices;
+  };
+
+  const calculateTotalPrice = () => {
+    const basePrice =
+      bookingDetails.adults * bookingDetails.adultPrice +
+      bookingDetails.children * bookingDetails.childPrice;
+
+    const totalServicesPrice = calculateTotalServicesPrice();
+
+    return basePrice + totalServicesPrice;
+  };
+
+  const totalPrice = calculateTotalPrice();
 
   return (
     <>
@@ -391,10 +455,102 @@ const UserData = () => {
           </div>
 
           <div className="d-flex justify-content-center">
-            <button className='mt-lg-4 mt-3 btn-main btn pay-btn' onClick={handleSubmit} >Add To Cart</button>
+            {/* <button className='mt-lg-4 mt-3 btn-main btn pay-btn' onClick={handleSubmit} >Add To Cart</button> */}
+            <button className="mt-lg-4 mt-3 btn-main btn pay-btn" onClick={handleOpen}>
+              Continue
+            </button>
           </div>
         </div>
-      </div >
+      </div>
+
+      {/* Dialog details*/}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle variant="h4" className='main-color text-center mb-0 pb-0'>Details</DialogTitle>
+        <DialogContent>
+          <hr className='my-2' />
+          {formData.adults.length > 0 && (
+            <Typography variant="h6">
+              <span className='main-color'>Number Of Adults:</span> {formData.adults.length} x {bookingDetails.adultPrice}$
+            </Typography>
+          )}
+
+          {formData.adults.length === 0 && (
+            <Typography variant="h6">
+              <span className='main-color'>Number Of Adults:</span> 0
+            </Typography>
+          )}
+
+          {formData.children.length > 0 && (
+            <Typography variant="h6">
+              <span className="main-color">Number Of Children:</span> {formData.children.length} x {bookingDetails.childPrice}$
+            </Typography>
+          )}
+
+          {formData.children.length === 0 && (
+            <Typography variant="h6">
+              <span className="main-color">Number Of Children:</span> 0
+            </Typography>
+          )}
+          <hr className='my-2' />
+          <Typography variant="h6" className="mt-"><span className="main-color">Adults Services:</span></Typography>
+          {selectedServices.adults.length > 0 ? (
+            Object.values(
+              selectedServices.adults.flat().reduce((acc, service) => {
+                if (service && service.name) {
+                  if (!acc[service.name]) {
+                    acc[service.name] = { ...service, count: 1 };
+                  } else {
+                    acc[service.name].count += 1;
+                  }
+                }
+                return acc;
+              }, {})
+            ).map((service, index) => (
+              <Typography key={index}>
+                {service.name} - {service.adultPrice} x {service.count} = {service.adultPrice * service.count} $
+              </Typography>
+            ))
+          ) : (
+            <Typography>No services.</Typography>
+          )}
+          <hr className='my-2' />
+          <Typography variant="h6" className="mt-3"><span className="main-color">Children Services:</span></Typography>
+          {selectedServices.children.length > 0 ? (
+            Object.values(
+              selectedServices.children.flat().reduce((acc, service) => {
+                if (service && service.name) {
+                  if (!acc[service.name]) {
+                    acc[service.name] = { ...service, count: 1 };
+                  } else {
+                    acc[service.name].count += 1;
+                  }
+                }
+                return acc;
+              }, {})
+            ).map((service, index) => (
+              <Typography key={index}>
+                {service.name} - {service.childPrice} x {service.count} = {service.childPrice * service.count} $
+              </Typography>
+            ))
+          ) : (
+            <Typography>No services</Typography>
+          )}
+          <hr className='my-2' />
+          <Typography variant="h6" className="mt-3">
+            <span className="main-color">Total Services Price:</span> {calculateTotalServicesPrice()} $
+          </Typography>
+          <hr className='my-2' />
+          <Typography variant="h6" className="">
+            <span className="main-color">Total Booking Price (with services):</span> {totalPrice} $
+          </Typography>
+
+        </DialogContent>
+        <hr className='my-2' />
+        <DialogActions className='d-flex justify-content-between align-items-center pb-3'>
+          <button className='btn-main rounded-2 p-2' onClick={handleClose}>Close</button>
+          <button className='btn-main rounded-2 p-2' onClick={handleSubmit}>Add to Cart</button>
+        </DialogActions>
+      </Dialog>
     </>
 
   )

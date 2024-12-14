@@ -4,14 +4,17 @@ import { Navbar, Nav, NavLink, NavDropdown } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../css/firstnav.css';
 import { jwtDecode } from 'jwt-decode';
+import { clearCart } from '../../store/Cart/cartSlice';
+import { useDispatch } from 'react-redux';
 
 const Header = () => {
     const token = localStorage.getItem('token');
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleLogout = () => {
-        localStorage.removeItem('token');
-
+        dispatch(clearCart());
+        localStorage.clear();
         navigate('/login');
     };
 

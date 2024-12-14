@@ -63,6 +63,8 @@ const cartSlice = createSlice({
             state.totalPrice = 0;
             saveCartToLocalStorage(state);
         },
+
+
     },
 });
 

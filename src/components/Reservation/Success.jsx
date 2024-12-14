@@ -346,7 +346,7 @@ const Success = () => {
                                                       .join(', ')}`
                                                 : 'Services: No services',
 
-                                            price > 0 ? `Total Price: ${price} $` : '',
+                                            // price > 0 ? `Total Price: ${price} $` : '',
                                         ]
                                             .filter(line => line.trim() !== '')
                                             .join('\n');
@@ -452,14 +452,14 @@ const Success = () => {
                                                     )}
                                                 </div>
 
-                                                {price > 0 && (
+                                                {/* {price > 0 && (
                                                     <p>
                                                         <strong className="main-color">
                                                             Total Price:
                                                         </strong>{' '}
                                                         {price} $
                                                     </p>
-                                                )}
+                                                )} */}
                                             </div>
                                         );
                                     })}

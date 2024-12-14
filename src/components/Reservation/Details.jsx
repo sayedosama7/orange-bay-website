@@ -48,8 +48,26 @@ export default function Details() {
     });
 
     const handleBookNow = () => {
-        const ticketExists = cart.some(item => item.ticketId === overviewData.id);
+        if (cart.length > 0) {
+            const isDateInCart = cart.some(
+                item => new Date(item.bookingDate).toDateString() === selectedDate.toDateString()
+            );
 
+            if (!isDateInCart) {
+                Swal.fire({
+                    text: 'The selected date does not match items in the cart.',
+                    icon: 'warning',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                });
+                return;
+            }
+        }
+
+        const ticketExists = cart.some(item => item.ticketId === overviewData.id);
         if (ticketExists) {
             Swal.fire({
                 text: 'This ticket is already in your cart!',
@@ -62,6 +80,7 @@ export default function Details() {
             });
             return;
         }
+
         if (!selectedDate) {
             Swal.fire({
                 icon: 'error',
@@ -71,6 +90,7 @@ export default function Details() {
             });
             return;
         }
+
         if (adults === 0) {
             Swal.fire({
                 icon: 'error',
