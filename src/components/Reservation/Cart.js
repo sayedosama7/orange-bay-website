@@ -106,7 +106,7 @@ const Cart = ({ handleNext }) => {
                                                             {uniqueServices.map((service, index) => {
                                                                 return (
                                                                     <div key={index}>
-                                                                        <ul>
+                                                                        <ul className='m-0'>
                                                                             <li>
                                                                                 {serviceCounts[service.name]} x <span className="main-color fw-bold">{service.name}</span>
                                                                             </li>
@@ -116,13 +116,13 @@ const Cart = ({ handleNext }) => {
                                                             })}
                                                         </div>
 
-                                                        <p className="text-dark fw-bold m-1">
+                                                        <p className="text-dark fw-bold mt-1">
                                                             <strong className='main-color'>Total Price for Services: </strong> {item.srvPrice} $
                                                         </p>
 
-                                                        <p className="text-dark fw-bold m-1">
+                                                        <h5 className="text-dark fw-bold m-1">
                                                             <strong className='main-color'>Total Price: </strong> {item.price} $
-                                                        </p>
+                                                        </h5>
                                                     </CardContent>
                                                 </div>
                                             </div>
