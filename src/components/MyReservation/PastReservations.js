@@ -9,7 +9,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
-import { baseURL } from '../Api/Api';
+import { baseURL, ORDER } from '../Api/Api';
 import { Loading } from '../Loading/Loading';
 import CardActions from '@mui/material/CardActions';
 const PastReservations = () => {
@@ -23,7 +23,7 @@ const PastReservations = () => {
         const token = localStorage.getItem("token");
         setLoading(true);
         try {
-            const response = await axios.get(`${baseURL}/Booking/GetByUserId`, {
+            const response = await axios.get(`${baseURL}/${ORDER}/GetByUserId`, {
                 headers: {
                     Accept: '*/*',
                     'Content-Type': 'application/json',
@@ -55,11 +55,10 @@ const PastReservations = () => {
         setSelectedBookingItems([]);
     };
 
-    const payment = {
-        "0": "unpaid",
-        "1": "paid",
+    const type = {
+        "0": "adult",
+        "1": "child",
     }
-
     return (
         <div>
             <div className="container text-center">
@@ -72,7 +71,7 @@ const PastReservations = () => {
                             <Grid container spacing={3} justifyContent="center">
                                 {pastRservations.length > 0 ? (
                                     pastRservations.map((reservation) => (
-                                        <Grid item xs={12} sm={6} md={6} key={reservation.bookingId}>
+                                        <Grid item xs={12} sm={6} md={6} key={reservation.orderId}>
                                             <Card className='mb-3 p-2' sx={{
                                                 boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
                                             }}>
@@ -88,7 +87,7 @@ const PastReservations = () => {
                                                     <div className="col-md-6">
                                                         <CardContent>
                                                             <Typography component="div">
-                                                                <span className='main-color'> booking Id: </span> {reservation.bookingId}
+                                                                <span className='main-color'> booking Id: </span> {reservation.orderId}
                                                             </Typography>
                                                             <Typography variant="body2" color="text.secondary">
                                                                 <span className="main-color">Ticket Name:</span> {reservation.ticketName}
@@ -99,14 +98,11 @@ const PastReservations = () => {
                                                             <Typography variant="body2" color="text.secondary">
                                                                 <span className="main-color">Number Of Childs:</span> {reservation.numberOfChilds}
                                                             </Typography>
-                                                            <Typography variant="body1">
-                                                                <span className="main-color">payment:</span>{" "} <span className='text-danger fw-bold'>{payment[reservation.payment]}</span>
+                                                            <Typography variant="body2" color="text.secondary">
+                                                                <span className="main-color">total Services Price:</span> {reservation.totalAddtionalPrice} $
                                                             </Typography>
                                                             <Typography variant="body2" color="text.secondary">
                                                                 <span className="main-color">Total Price:</span> {reservation.totalPrice} $
-                                                            </Typography>
-                                                            <Typography variant="body2" color="text.secondary">
-                                                                <span className="main-color">total Services Price:</span> {reservation.totalAddtionalPrice} $
                                                             </Typography>
                                                         </CardContent>
                                                     </div>
@@ -140,10 +136,10 @@ const PastReservations = () => {
                                             <strong className="main-color">Book Date:</strong> {new Date(item.bookDate).toLocaleString()}
                                         </Typography>
                                         <Typography variant="body1">
-                                            <strong className="main-color">Name:</strong> {item.name}
+                                            <strong className="main-color">Book On:</strong> {new Date(item.createdOn).toLocaleString()}
                                         </Typography>
                                         <Typography variant="body1">
-                                            <strong className="main-color">Price:</strong> {item.price} $
+                                            <strong className="main-color">Name:</strong> {item.name}
                                         </Typography>
                                         {item.phoneNumber && (
                                             <Typography variant="body1">
@@ -155,6 +151,9 @@ const PastReservations = () => {
                                                 <strong className="main-color">Email:</strong> {item.email}
                                             </Typography>
                                         )}
+                                        <Typography variant="body1">
+                                            <strong className="main-color">Type:</strong> {type[item.personAge]}
+                                        </Typography>
                                         <Typography variant="body2">
                                             <strong className="main-color">Services:</strong>
                                         </Typography>
@@ -167,6 +166,10 @@ const PastReservations = () => {
                                         ) : (
                                             <Typography variant="body2">No services available.</Typography>
                                         )}
+                                        <Typography variant="body1">
+                                            <strong className="main-color">Price:</strong> {item.price} $
+                                        </Typography>
+
                                     </Card>
                                 </Grid>
                             ))

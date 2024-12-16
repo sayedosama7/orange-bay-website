@@ -9,7 +9,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Button from '@mui/material/Button';
-import { baseURL } from '../Api/Api';
+import { baseURL, ORDER } from '../Api/Api';
 import { Loading } from '../Loading/Loading';
 import CardActions from '@mui/material/CardActions';
 const UpcomingReservations = () => {
@@ -19,15 +19,14 @@ const UpcomingReservations = () => {
     const [openDialog, setOpenDialog] = useState(false);
 
     // Fetch reservation
-
-    const fetchData = useCallback(async () => {
+    const fetchData = useCallback(async (id) => {
         if (upcomingReservations.length > 0) {
             return;
         }
         const token = localStorage.getItem("token");
         setLoading(true);
         try {
-            const response = await axios.get(`${baseURL}/Booking/GetByUserId`, {
+            const response = await axios.get(`${baseURL}/${ORDER}/GetByUserId`, {
                 headers: {
                     Accept: '*/*',
                     'Content-Type': 'application/json',
@@ -36,7 +35,11 @@ const UpcomingReservations = () => {
             });
 
             const upcomingReservations = response.data.value?.upcommingRservations || [];
+            const bookId = response.data.value?.upcommingRservations[0].orderId;
+            console.log("orderId", bookId);
+
             setUpcomingReservations(upcomingReservations);
+
         } catch (error) {
             console.error('Error fetching data:', error);
             setLoading(false);
@@ -49,6 +52,42 @@ const UpcomingReservations = () => {
         fetchData();
     }, [fetchData]);
 
+    const sendCancelRequest = async (bookId) => {
+        try {
+            const token = localStorage.getItem("token");
+
+            const response = await fetch(`${baseURL}/orders/CancelOrder`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ bookId }),
+            });
+
+            const result = await response.json();
+
+            if (result.isSuccess) {
+                console.log("Cancel request successful");
+                setUpcomingReservations((prevReservations) =>
+                    prevReservations.filter((reservation) => reservation.orderId !== bookId)
+                );
+            } else {
+                console.error("Error in cancel request:", result.message);
+            }
+        } catch (error) {
+            console.error("Error sending cancel request:", error);
+        }
+    };
+
+    const handleCancelBtn = async (bookId) => {
+        try {
+            await sendCancelRequest(bookId);
+            setUpcomingReservations(prev => prev.filter(reservation => reservation.id !== bookId));
+        } catch (error) {
+            console.error("Error handling cancel button:", error);
+        }
+    };
 
     const handleOpenDialog = (reservation) => {
         setSelectedBookingItems(reservation.bookingItems || []);
@@ -61,8 +100,13 @@ const UpcomingReservations = () => {
     };
 
     const payment = {
-        "0": "unpaid",
-        "1": "paid",
+        "1": "unpaid",
+        "0": "paid",
+    }
+
+    const type = {
+        "0": "adult",
+        "1": "child",
     }
 
     return (
@@ -77,7 +121,7 @@ const UpcomingReservations = () => {
                             <Grid container spacing={3} justifyContent="center">
                                 {upcomingReservations.length > 0 ? (
                                     upcomingReservations.map((reservation) => (
-                                        <Grid item xs={12} sm={6} md={6} key={reservation.bookingId}>
+                                        <Grid item xs={12} sm={6} md={6} key={reservation.orderId}>
                                             <Card className='mb-3 p-2' sx={{
                                                 boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
                                             }}>
@@ -93,7 +137,7 @@ const UpcomingReservations = () => {
                                                     <div className="col-md-6">
                                                         <CardContent>
                                                             <Typography component="div">
-                                                                <span className='main-color'> booking Id: </span> {reservation.bookingId}
+                                                                <span className='main-color'> booking Id: </span> {reservation.orderId}
                                                             </Typography>
                                                             <Typography variant="body2" color="text.secondary">
                                                                 <span className="main-color">Ticket Name:</span> {reservation.ticketName}
@@ -108,16 +152,16 @@ const UpcomingReservations = () => {
                                                                 <span className="main-color">payment:</span>{" "} <span className='text-danger fw-bold'>{payment[reservation.payment]}</span>
                                                             </Typography>
                                                             <Typography variant="body2" color="text.secondary">
-                                                                <span className="main-color">Total Price:</span> {reservation.totalPrice} $
+                                                                <span className="main-color">total Services Price:</span> {reservation.totalAddtionalPrice} $
                                                             </Typography>
                                                             <Typography variant="body2" color="text.secondary">
-                                                                <span className="main-color">total Services Price:</span> {reservation.totalAddtionalPrice} $
+                                                                <span className="main-color">Total Price:</span> {reservation.totalPrice} $
                                                             </Typography>
                                                         </CardContent>
                                                     </div>
                                                     <CardActions className='d-flex justify-content-between px-4'>
                                                         <button onClick={() => handleOpenDialog(reservation)} className='btn btn-main p-2 text-capitalize'>details</button>
-                                                        <button className='btn btn-danger p-2 text-capitalize'>Cancel</button>
+                                                        <button className='btn btn-danger p-2 text-capitalize' onClick={() => handleCancelBtn(reservation.orderId)}>Cancel</button>
                                                     </CardActions>
                                                 </div>
                                             </Card>
@@ -145,10 +189,13 @@ const UpcomingReservations = () => {
                                             <strong className="main-color">Book Date:</strong> {new Date(item.bookDate).toLocaleString()}
                                         </Typography>
                                         <Typography variant="body1">
-                                            <strong className="main-color">Name:</strong> {item.name}
+                                            <strong className="main-color">Book On:</strong> {new Date(item.createdOn).toLocaleString()}
                                         </Typography>
                                         <Typography variant="body1">
-                                            <strong className="main-color">Price:</strong> {item.price} $
+                                            <strong className="main-color">Serial Number:</strong> {item.seriamNumber}
+                                        </Typography>
+                                        <Typography variant="body1">
+                                            <strong className="main-color">Name:</strong> {item.name}
                                         </Typography>
                                         {item.phoneNumber && (
                                             <Typography variant="body1">
@@ -160,6 +207,9 @@ const UpcomingReservations = () => {
                                                 <strong className="main-color">Email:</strong> {item.email}
                                             </Typography>
                                         )}
+                                        <Typography variant="body1">
+                                            <strong className="main-color">Type:</strong> {type[item.personAge]}
+                                        </Typography>
                                         <Typography variant="body2">
                                             <strong className="main-color">Services:</strong>
                                         </Typography>
@@ -172,6 +222,9 @@ const UpcomingReservations = () => {
                                         ) : (
                                             <Typography variant="body2">No services available.</Typography>
                                         )}
+                                        <Typography variant="body1">
+                                            <strong className="main-color">Price:</strong> {item.price} $
+                                        </Typography>
                                     </Card>
                                 </Grid>
                             ))

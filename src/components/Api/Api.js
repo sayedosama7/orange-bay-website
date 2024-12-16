@@ -48,6 +48,7 @@ export const CURRENCIES = 'currencies';
 
 // ORDERS
 export const ORDER_CREATE = 'orders';
+export const ORDER = 'orders';
 
 // TOURGUIDE
 export const TOURGUIDE = 'tour-guides';
