@@ -56,8 +56,8 @@ const PastReservations = () => {
     };
 
     const type = {
-        "0": "adult",
-        "1": "child",
+        "1": "adult",
+        "2": "child",
     }
     return (
         <div>

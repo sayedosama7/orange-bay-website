@@ -177,6 +177,27 @@ const Success = () => {
                                             )}
                                         </div> */}
 
+                                        <div>
+                                            <p className="main-color fw-bold">Services:</p>
+                                            {detail.addtionalServiceResponses &&
+                                            detail.addtionalServiceResponses.length > 0 ? (
+                                                detail.addtionalServiceResponses.map(
+                                                    (service, serviceIndex) => (
+                                                        <div key={serviceIndex}>
+                                                            <p>
+                                                                <strong className="main-color">
+                                                                    Service Name:
+                                                                </strong>{' '}
+                                                                {service.name}
+                                                            </p>
+                                                        </div>
+                                                    )
+                                                )
+                                            ) : (
+                                                <p>No additional services</p>
+                                            )}
+                                        </div>
+
                                         <p>
                                             <strong className="main-color">Price:</strong>{' '}
                                             {detail.price} $

@@ -12,6 +12,7 @@ import Button from '@mui/material/Button';
 import { baseURL, ORDER } from '../Api/Api';
 import { Loading } from '../Loading/Loading';
 import CardActions from '@mui/material/CardActions';
+import Swal from 'sweetalert2';
 const UpcomingReservations = () => {
     const [upcomingReservations, setUpcomingReservations] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -53,31 +54,64 @@ const UpcomingReservations = () => {
     }, [fetchData]);
 
     const sendCancelRequest = async (bookId) => {
-        try {
-            const token = localStorage.getItem("token");
+        Swal.fire({
+            title: 'Are you sure you want to cancel?',
+            text: 'You won’t be able to undo this action!',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            cancelButtonText: 'Cancel',
+            confirmButtonText: 'Yes, I’m sure',
+            customClass: {
+                popup: 'small-swal',
+                title: 'swal-orange-title',
+            },
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const token = localStorage.getItem("token");
 
-            const response = await fetch(`${baseURL}/orders/CancelOrder`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ bookId }),
-            });
+                    const response = await fetch(`${baseURL}/orders/CancelOrder`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
+                        },
+                        body: JSON.stringify({ bookId }),
+                    });
 
-            const result = await response.json();
+                    const result = await response.json();
 
-            if (result.isSuccess) {
-                console.log("Cancel request successful");
-                setUpcomingReservations((prevReservations) =>
-                    prevReservations.filter((reservation) => reservation.orderId !== bookId)
-                );
+                    if (result.isSuccess) {
+                        console.log("Cancel request successful");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Cancellation Successful!',
+                            text: 'The ticket has been successfully canceled.',
+                        });
+                        setUpcomingReservations((prevReservations) =>
+                            prevReservations.filter((reservation) => reservation.orderId !== bookId)
+                        );
+                    } else {
+                        console.error("Error in cancel request:", result.message);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Cancellation Failed',
+                            text: result.message || 'An error occurred while canceling the ticket.',
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error sending cancel request:", error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'A problem occurred while communicating with the server.',
+                    });
+                }
             } else {
-                console.error("Error in cancel request:", result.message);
+                console.log("Cancel action was aborted by the user.");
             }
-        } catch (error) {
-            console.error("Error sending cancel request:", error);
-        }
+        });
     };
 
     const handleCancelBtn = async (bookId) => {
@@ -105,8 +139,8 @@ const UpcomingReservations = () => {
     }
 
     const type = {
-        "0": "adult",
-        "1": "child",
+        "1": "adult",
+        "2": "child",
     }
 
     return (

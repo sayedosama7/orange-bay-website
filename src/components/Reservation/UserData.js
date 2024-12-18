@@ -16,6 +16,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Typography from '@mui/material/Typography';
+import { jwtDecode } from 'jwt-decode';
 
 const UserData = () => {
   const [open, setOpen] = useState(false);
@@ -23,7 +24,6 @@ const UserData = () => {
   const handleOpen = () => {
     const isValid = validateForm();
     if (isValid) {
-      console.log('Selected Services:', selectedServices);
       setOpen(true);
     }
   };
@@ -57,7 +57,10 @@ const UserData = () => {
   const fetchData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${baseURL}/${ADDTIONALSERVICES}`, {
+      const decoded = jwtDecode(token);
+      let role = ''
+      role = decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+      const response = await axios.get(`${baseURL}/${ADDTIONALSERVICES}/GetByRole?role=${role}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

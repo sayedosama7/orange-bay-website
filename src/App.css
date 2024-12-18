@@ -28,6 +28,10 @@
   font-size: 20px;
 }
 
+.swal-orange-title {
+  color: #E07026;
+}
+
 .modal {
   position: fixed;
   top: 0;
