@@ -36,50 +36,36 @@ const Payment = ({ handleNext }) => {
   const handleOpenDialog = (e) => {
     e.preventDefault();
 
-    let valid = true;
+    const errors = {
+      boatingError: !selectedBoats ? 'Please select a Cruise' : '',
+      guideError: !selectedGuides ? 'Please select a Tour Guide' : '',
+      nationalityError: !selectedNationalities ? 'Please select a Nationality' : '',
+      harbourError: !selectedHarbour ? 'Please select a Marina' : '',
+    };
 
-    if (!selectedBoats) {
-      setBoatingError('Please select a Cruise');
-      valid = false;
-    }
-    if (!selectedGuides) {
-      setGuideError('Please select a Tour Guide');
-      valid = false;
-    }
-    if (!selectedNationalities) {
-      setNationalityError('Please select a Nationality');
-      valid = false;
-    }
-    if (!selectedHarbour) {
-      setHarbourError('Please select a Marina');
-      valid = false;
-    }
+    setBoatingError(errors.boatingError);
+    setGuideError(errors.guideError);
+    setNationalityError(errors.nationalityError);
+    setHarbourError(errors.harbourError);
 
+    const valid = Object.values(errors).every((error) => error === '');
     if (valid) {
       setOpen(true);
     }
+  };
+  const handleChange = (setter, errorSetter) => (event) => {
+    setter(event.target.value);
+    errorSetter('');
   };
 
   const handleCloseDialog = () => {
     setOpen(false);
   };
 
-  const handleBoatsChange = (event) => {
-    setSelectedBoats(event.target.value);
-    setBoatingError('');
-  };
-  const handleGuideChange = (event) => {
-    setSelectedGuides(event.target.value);
-    setGuideError('');
-  };
-  const handleNatChange = (event) => {
-    setSelectedNationalities(event.target.value);
-    setNationalityError('');
-  };
-  const handleHarbourChange = (event) => {
-    setSelectedHarbour(event.target.value);
-    setHarbourError('');
-  };
+  const handleBoatsChange = handleChange(setSelectedBoats, setBoatingError);
+  const handleGuideChange = handleChange(setSelectedGuides, setGuideError);
+  const handleNatChange = handleChange(setSelectedNationalities, setNationalityError);
+  const handleHarbourChange = handleChange(setSelectedHarbour, setHarbourError);
 
   const fetchData = async (endpoint, setState, key = null, currentData = []) => {
     if (currentData.length > 0) {

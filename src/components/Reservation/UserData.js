@@ -95,6 +95,16 @@ const UserData = () => {
     const updatedData = [...formData[type]];
     updatedData[index] = { ...updatedData[index], [field]: value };
     setFormData({ ...formData, [type]: updatedData });
+
+    if (value.trim()) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [type]: prevErrors[type].map((item, idx) =>
+          idx === index ? { ...item, [field]: '' } : item
+        ),
+      }));
+    }
+
   };
 
   // const handleServiceChange = (type, index, newValue) => {
@@ -467,7 +477,7 @@ const UserData = () => {
       </div>
 
       {/* Dialog details*/}
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} fullWidth >
         <DialogTitle variant="h4" className='main-color text-center mb-0 pb-0'>Details</DialogTitle>
         <DialogContent>
           <hr className='my-2' />
