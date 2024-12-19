@@ -119,13 +119,19 @@ export default function Details() {
             ticketImg: overviewData.ticketImg,
             id: overviewData.id,
             selectedDate: selectedDate.toISOString().split('T')[0],
-            currentDate: new Date().toISOString(),
+            currentDate: new Intl.DateTimeFormat('en-CA', {
+                timeZone: 'Africa/Cairo',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+            }).format(new Date()),
             adults,
             children,
             adultPrice: overviewData.adultPrice,
             childPrice: overviewData.childPrice,
         };
         dispatch(setBookingDetails(bookDetail));
+        console.log('bookDetail', bookDetail);
         navigate('/user-data');
     };
 
@@ -155,10 +161,10 @@ export default function Details() {
                                         className="form-control text-center"
                                         minDate={new Date()}
                                         placeholderText="Select a date"
-                                        filterDate={date => {
-                                            const today = new Date();
-                                            return date > today;
-                                        }}
+                                        // filterDate={date => {
+                                        //     const today = new Date();
+                                        //     return date > today;
+                                        // }}
                                     />
 
                                     <div className="input-group-append">

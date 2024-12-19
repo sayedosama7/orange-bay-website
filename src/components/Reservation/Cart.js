@@ -85,9 +85,9 @@ const Cart = ({ handleNext }) => {
                                                         <p className="text-dark fw-bold m-1">
                                                             <strong className='main-color'>Ticket Name: </strong> {item.ticketName}
                                                         </p>
-                                                        <p className="text-dark fw-bold m-1">
+                                                        {/* <p className="text-dark fw-bold m-1">
                                                             <strong className='main-color'>Ticket ID: </strong> {item.ticketId}
-                                                        </p>
+                                                        </p> */}
                                                         <p className="text-dark fw-bold m-1">
                                                             <strong className='main-color'>Adults: </strong> {item.numberOfAdults} x {item.adultPrice} $ = {priceForAllAdults} $
                                                         </p>
